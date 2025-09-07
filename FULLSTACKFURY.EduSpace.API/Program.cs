@@ -55,7 +55,7 @@ var builder = WebApplication.CreateBuilder(args);
 //Environment variables//
 
 string server = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
-string port = Environment.GetEnvironmentVariable("DB_PORT") ?? "3307";
+string port = Environment.GetEnvironmentVariable("DB_PORT") ?? "3308";
 string user = Environment.GetEnvironmentVariable("DB_USER") ?? "eduspace";
 string password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "eduspace1234";
 string allowPublicKeyRetrieval = Environment.GetEnvironmentVariable("DB_ALLOW_PUBLIC_KEY_RETRIEVAL") ?? "True";
