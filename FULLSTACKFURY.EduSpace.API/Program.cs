@@ -55,20 +55,11 @@ DotNetEnv.Env.Load("../.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Environment variables//
-
-string server = Environment.GetEnvironmentVariable("DB_SERVER") ?? "";
-string port = Environment.GetEnvironmentVariable("DB_PORT") ?? "";
-string user = Environment.GetEnvironmentVariable("DB_USER") ?? "";
-string password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
-string allowPublicKeyRetrieval = Environment.GetEnvironmentVariable("DB_ALLOW_PUBLIC_KEY_RETRIEVAL") ?? "";
-string sslMode = Environment.GetEnvironmentVariable("DB_SSL_MODE") ?? "";
-string database = Environment.GetEnvironmentVariable("DB_NAME") ?? "";
-
-string connectionString = $"server={server};port={port};user={user};password={password};database={database};AllowPublicKeyRetrieval={allowPublicKeyRetrieval};SslMode={sslMode};";
-
-Console.WriteLine(connectionString);
-
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string not found.");
+}
 
 // Add services to the container.
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -135,16 +126,6 @@ builder.Services.AddSwaggerGen(
         });
         c.EnableAnnotations();
     });
-
-builder.Configuration["ConnectionStrings.DefaultConnection"] = connectionString;
-
-if (connectionString == null)
-{
-    throw new InvalidOperationException("Connection string not found.");
-}
-
-
-
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
