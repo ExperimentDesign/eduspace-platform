@@ -49,18 +49,21 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.ACL.Serv
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using IExternalProfileService = FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices.IExternalProfileService;
+using DotNetEnv;
+
+DotNetEnv.Env.Load("../.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Environment variables//
 
-string server = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
-string port = Environment.GetEnvironmentVariable("DB_PORT") ?? "3308";
-string user = Environment.GetEnvironmentVariable("DB_USER") ?? "eduspace";
-string password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "eduspace1234";
-string allowPublicKeyRetrieval = Environment.GetEnvironmentVariable("DB_ALLOW_PUBLIC_KEY_RETRIEVAL") ?? "True";
-string sslMode = Environment.GetEnvironmentVariable("DB_SSL_MODE") ?? "None";
-string database = Environment.GetEnvironmentVariable("DB_NAME") ?? "eduspacedb";
+string server = Environment.GetEnvironmentVariable("DB_SERVER") ?? "";
+string port = Environment.GetEnvironmentVariable("DB_PORT") ?? "";
+string user = Environment.GetEnvironmentVariable("DB_USER") ?? "";
+string password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+string allowPublicKeyRetrieval = Environment.GetEnvironmentVariable("DB_ALLOW_PUBLIC_KEY_RETRIEVAL") ?? "";
+string sslMode = Environment.GetEnvironmentVariable("DB_SSL_MODE") ?? "";
+string database = Environment.GetEnvironmentVariable("DB_NAME") ?? "";
 
 string connectionString = $"server={server};port={port};user={user};password={password};database={database};AllowPublicKeyRetrieval={allowPublicKeyRetrieval};SslMode={sslMode};";
 
