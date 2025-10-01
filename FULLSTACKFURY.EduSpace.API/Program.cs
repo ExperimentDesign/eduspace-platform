@@ -13,11 +13,6 @@ using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL;
 using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Hashing.BCrypt.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Persistence.EFC.Repositories;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Application.Internal.CommandServices;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Application.Internal.QueryServices;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Domain.Repositories;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Domain.Services;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Infrastructure.Persistence.EFC.Repositories;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Pipeline.Middleware.Components;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Configuration;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Services;
@@ -49,7 +44,6 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.ACL.Serv
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using IExternalProfileService = FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices.IExternalProfileService;
-using DotNetEnv;
 using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.CommandServices;
 using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.QueryServices;
 using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
@@ -174,10 +168,6 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IExternalProfileService, ExternalProfileServices>();
 builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
 builder.Services.AddScoped<IReservationQueryService, ReservationQueryService>();
-
-builder.Services.AddScoped<IPayrollCommandService, PayrollCommandService>();
-builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
-builder.Services.AddScoped<IPayrollQueryService, PayrollQueryService>();
 
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IReportCommandService, ReportCommandService>();

@@ -1,16 +1,12 @@
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Model.Aggregates;
-using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Model.ValueObjects;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Aggregates;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Entities;
 using FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Model.Aggregates;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.X509.Qualified;
-using TeacherId = FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.ValueObjects.TeacherId;
 
 namespace FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 
@@ -78,7 +74,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Account>().Property(a => a.PasswordHash).IsRequired();
         builder.Entity<Account>().Property(a => a.Role).IsRequired();
         
-        
         //Reservations Context
 
         builder.Entity<Reservation>().HasKey(r => r.Id);
@@ -104,30 +99,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 ti.Property(r => r.TeacherIdentifier).HasColumnName("TeacherId");
             });
         
-        // Payroll Context
-        builder.Entity<Payroll>().HasKey(p => p.Id);
-        builder.Entity<Payroll>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Entity<Payroll>().Property(p => p.TeacherId).IsRequired();
-        builder.Entity<Payroll>().Property(p => p.SalaryNet).IsRequired();
-
-        // Configuración de SalaryAmount como Owned Type
-        builder.Entity<Payroll>().OwnsOne(p => p.SalaryAmount, sa =>
-            {
-                sa.WithOwner().HasForeignKey("Id");
-                sa.Property(p => p.Value).HasColumnName("SalaryAmount").IsRequired();
-            });
-
-        // Configuración de PayrollAdjustment como Owned Type
-        builder.Entity<Payroll>().OwnsOne(p => p.PayrollAdjustment, pa =>
-            {
-                pa.WithOwner().HasForeignKey("Id");
-                pa.Property(p => p.PensionContribution).HasColumnName("PensionContribution").IsRequired();
-                pa.Property(p => p.SalaryBonus).HasColumnName("SalaryBonus").IsRequired();
-            });
-        
-        
-
-        
         builder.Entity<Classroom>().HasKey(c => c.Id);
         builder.Entity<Classroom>().Property(c => c.Name).IsRequired();
         builder.Entity<Classroom>().Property(c => c.Description).IsRequired();
@@ -146,13 +117,11 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .WithMany(c => c.Resources)
             .HasForeignKey(r => r.ClassroomId)
             .OnDelete(DeleteBehavior.Cascade);
-
                 
         builder.Entity<SharedArea>().HasKey(sa => sa.Id);
         builder.Entity<SharedArea>().Property(sa => sa.Name).IsRequired();
         builder.Entity<SharedArea>().Property(sa => sa.Capacity).IsRequired();
         builder.Entity<SharedArea>().Property(sa => sa.Description).IsRequired();
-        
         
         //RESERVATION SCHEDULING BC 
         
@@ -178,7 +147,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 v => v.ToTimeSpan(),                 // Convert TimeOnly to TimeSpan for the database
                 v => TimeOnly.FromTimeSpan(v));  
         
-        
         builder.Entity<Meeting>().Property(m => m.StartTime).IsRequired();
         builder.Entity<Meeting>().Property(m => m.EndTime).IsRequired();
         
@@ -197,14 +165,20 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         ci.Property(r => r.ClassroomIdentifier).HasColumnName("ClassroomId");
     });
         
-
+        builder.Entity<MeetingSession>()
+            .HasKey(ms => new { ms.MeetingId, ms.TeacherId });
 
         builder.Entity<MeetingSession>()
-            .HasKey(ms => new { ms.TeacherId, ms.MeetingId });
-        
+            .HasOne(ms => ms.Meeting)
+            .WithMany(m => m.MeetingParticipants)
+            .HasForeignKey(ms => ms.MeetingId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<Meeting>().HasMany(m => m.MeetingParticipants);
-        
+        builder.Entity<MeetingSession>()
+            .HasOne(ms => ms.Teacher)
+            .WithMany()
+            .HasForeignKey(ms => ms.TeacherId)
+            .OnDelete(DeleteBehavior.Restrict);
         
         base.OnModelCreating(builder);
         
