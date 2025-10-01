@@ -37,7 +37,6 @@
 
     <ItemGroup>
       <Folder Include="SpacesAndResourceManagement\Application\OutboundServices\" />
-      <Folder Include="SpacesAndResourceManagement\Domain\Model\Entities\" />
     </ItemGroup>
 
 </Project>

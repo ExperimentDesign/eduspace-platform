@@ -50,6 +50,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using IExternalProfileService = FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices.IExternalProfileService;
 using DotNetEnv;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.CommandServices;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.QueryServices;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Services;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persistence.EFC.Repositories;
 
 DotNetEnv.Env.Load("../.env");
 
@@ -156,7 +161,6 @@ builder.Services.AddScoped<IAdminProfileRepository, AdminProfileRepository>();
 builder.Services.AddScoped<ITeacherProfileRepository, TeacherProfileRepository>();
 builder.Services.AddScoped<IAdminProfileCommandService, AdminProfileCommandService>();
 builder.Services.AddScoped<IAdminProfileQueryService, AdminProfileQueryService>();
-// builder.Services.AddScoped<IAdminProfileQueryService, AdminProfileQueryService>();
 builder.Services.AddScoped<ITeacherProfileCommandService, TeacherProfileCommandService>();
 builder.Services.AddScoped<ITeacherQueryService, TeacherProfileQueryService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
@@ -175,7 +179,9 @@ builder.Services.AddScoped<IPayrollCommandService, PayrollCommandService>();
 builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
 builder.Services.AddScoped<IPayrollQueryService, PayrollQueryService>();
 
-
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportCommandService, ReportCommandService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 
 //Reservation Scheduling
 
