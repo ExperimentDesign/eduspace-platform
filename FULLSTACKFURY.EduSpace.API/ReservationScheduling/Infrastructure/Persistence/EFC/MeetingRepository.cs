@@ -12,6 +12,18 @@ public class MeetingRepository(AppDbContext context)
 {
         public async Task<IEnumerable<Meeting>> FindAllByAdminIdAsync(int adminId)
         {
-                return await Context.Set<Meeting>().Where(f =>f.AdministratorId.AdministratorIdentifier == adminId).ToListAsync();
+                return await Context.Set<Meeting>()
+                        .Include(m => m.MeetingParticipants)
+                        .ThenInclude(mp => mp.Teacher)
+                        .Where(m => m.AdministratorId.AdministratorIdentifier == adminId)
+                        .ToListAsync();
+        }
+
+        public override async Task<IEnumerable<Meeting>> ListAsync()
+        {
+                return await Context.Set<Meeting>()
+                        .Include(m => m.MeetingParticipants)
+                        .ThenInclude(mp => mp.Teacher)
+                        .ToListAsync();
         }
 }

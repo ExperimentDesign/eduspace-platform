@@ -15,9 +15,6 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
 {
     public async Task<Meeting?> Handle(CreateMeetingCommand command)
     {
-        // var teacherIds = command.Teachers.Select(t => t.Id).ToList();
-        // if (!externalProfileService.ValidateTeachersExistence(teacherIds))
-        //     throw new ArgumentException("One or more teachers do not exist.");
         
         if (!externalProfileService.ValidateAdminIdExistence(command.AdministratorId))
             throw new ArgumentException("Admin ID does not exist.");
@@ -25,13 +22,10 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
         if (!externalClassroomService.ValidateClassroomId(command.ClassroomId))
             throw new ArgumentException("Classroom does not exist.");
         
-        // Create a new Meeting object
         var meeting = new Meeting(command);
 
-        // Add the new meeting to the repository
         await meetingRepository.AddAsync(meeting);
 
-        // Complete the transaction
         await unitOfWork.CompleteAsync();
 
         return meeting;
@@ -75,10 +69,12 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
             throw new ArgumentException("Meeting not found.");
         if (!externalProfileService.ValidateTeacherExistence(command.TeacherId))
             throw new ArgumentException("Teacher does not exist.");
+        
         try
         {
             meeting.TeacherIdBuilder(command.TeacherId);
-            meeting.AddTeacherToMeeting(command.MeetingId);
+            meeting.AddTeacherToMeeting(command.TeacherId);
+            meetingRepository.Update(meeting);
             await unitOfWork.CompleteAsync();
         }
         catch (Exception e)

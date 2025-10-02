@@ -20,7 +20,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
- 
+        base.OnModelCreating(builder);
 
         //Teacher Profiles Context
         builder.Entity<TeacherProfile>().HasKey(tp => tp.Id);
@@ -154,7 +154,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
            ai =>
            {
                ai.WithOwner().HasForeignKey("Id");
-               ai.Property(r => r.AdministratorIdentifier).HasColumnName("TeacherId");
+               ai.Property(r => r.AdministratorIdentifier).HasColumnName("AdministratorId");
            });
         
         
@@ -180,7 +180,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .HasForeignKey(ms => ms.TeacherId)
             .OnDelete(DeleteBehavior.Restrict);
         
-        base.OnModelCreating(builder);
         
         //#TODO Add configurations here
         

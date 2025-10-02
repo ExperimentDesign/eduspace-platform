@@ -10,5 +10,12 @@ public record MeetingResource(
     TimeOnly Start,
     TimeOnly End,
     AdministratorId AdministratorId,
-    ClassroomId ClassroomId
-);
+    ClassroomId ClassroomId,
+    IEnumerable<TeacherResource> Teachers
+    );
+
+public record TeacherResource (
+    int Id, 
+    string FirstName,
+    string LastName
+    ); 

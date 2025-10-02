@@ -8,6 +8,13 @@ public class MeetingResourceFromEntityAssembler
 {
     public static MeetingResource ToResourceFromEntity(Meeting entity)
     {
+        var teachers = entity.MeetingParticipants
+            .Select(mp => new TeacherResource(
+                mp.TeacherId,
+                mp.Teacher?.ProfileName?.FirstName ?? "UnKnown",
+                mp.Teacher?.ProfileName?.LastName ?? ""
+                ))
+            .ToList();
         
         return new MeetingResource(
             entity.Id,
@@ -17,6 +24,8 @@ public class MeetingResourceFromEntityAssembler
             entity.StartTime,
             entity.EndTime,
             entity.AdministratorId,
-            entity.ClassroomId);
+            entity.ClassroomId,
+            teachers
+            );
     }
 }
