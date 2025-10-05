@@ -1,4 +1,6 @@
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.Aggregates;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.ValueObjects;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
@@ -180,6 +182,25 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .HasForeignKey(ms => ms.TeacherId)
             .OnDelete(DeleteBehavior.Restrict);
         
+        // breakdown Management Context
+        builder.Entity<Report>().HasKey(r => r.Id);
+        builder.Entity<Report>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<Report>().Property(r => r.KindOfReport).IsRequired();
+        builder.Entity<Report>().Property(r => r.Description).IsRequired();
+        builder.Entity<Report>().Property(r => r.CreatedAt).IsRequired();
+        
+        builder.Entity<Report>().Property(r => r.Status)
+            .HasConversion(
+                status => status.Value,
+                value => ReportStatus.FromString(value) 
+            ).IsRequired();
+        
+        builder.Entity<Report>().Property(r => r.ResourceId)
+            .HasConversion(
+                resourceId => resourceId.Id, 
+                id => new ResourceId(id) 
+            )
+            .HasColumnName("ResourceId");
         
         //#TODO Add configurations here
         

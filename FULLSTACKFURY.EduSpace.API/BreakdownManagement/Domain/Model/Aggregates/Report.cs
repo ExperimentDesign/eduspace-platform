@@ -6,11 +6,18 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.Aggregates
 public record Report
 {
     public int Id { get; init; }
-    public string KindOfReport { get; init; }
-    public string Description { get; init; }
-    public ResourceId ResourceId { get; init; }
-    public DateTime CreatedAt { get; init; }
-    public ReportStatus Status { get; init; }
+    public string KindOfReport { get; private set; }
+    public string Description { get; private set; }
+    public ResourceId ResourceId { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public ReportStatus Status { get; private set; }
+
+    public Report()
+    {
+        KindOfReport = string.Empty;
+        Description = string.Empty;
+        Status = ReportStatus.EnProceso;
+    }
 
     public Report(string kindOfReport, string description, int resourceId, DateTime createdAt, ReportStatus status = null)
     {
