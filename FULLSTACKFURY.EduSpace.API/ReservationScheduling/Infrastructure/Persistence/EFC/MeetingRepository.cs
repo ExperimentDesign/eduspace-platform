@@ -7,8 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Infrastructure.Persistence.EFC;
 
-public class MeetingRepository(AppDbContext context)
-        : BaseRepository<Meeting>(context), IMeetingRepository
+public class MeetingRepository(AppDbContext context) : BaseRepository<Meeting>(context), IMeetingRepository
 {
         public async Task<IEnumerable<Meeting>> FindAllByAdminIdAsync(int adminId)
         {
