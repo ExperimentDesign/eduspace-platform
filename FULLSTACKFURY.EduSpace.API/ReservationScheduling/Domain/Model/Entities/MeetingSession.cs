@@ -1,3 +1,4 @@
+using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.ValueObjects;
 
@@ -8,6 +9,9 @@ public class MeetingSession
     public int MeetingId { get; set; }
     
     public int TeacherId { get; set; }
+    
+    public Meeting Meeting { get; set; }
+    public TeacherProfile Teacher { get; set; }
 
     public MeetingSession() { }
 

@@ -3,10 +3,12 @@ using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Model.Queries;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Services;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Interface.REST.Resources;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Interface.REST.Transform;
+using FULLSTACKFURY.EduSpace.API.Reservations.Interface.REST.Resources;
+using FULLSTACKFURY.EduSpace.API.Reservations.Interface.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace FULLSTACKFURY.EduSpace.API.EventsScheduling.Interface.REST;
+namespace FULLSTACKFURY.EduSpace.API.Reservations.Interface.REST;
 
 [ApiController]
 [Route("api/v1/")]

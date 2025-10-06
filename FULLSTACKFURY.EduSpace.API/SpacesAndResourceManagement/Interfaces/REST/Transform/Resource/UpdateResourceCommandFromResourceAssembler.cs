@@ -5,10 +5,10 @@ namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST
 
 public static class UpdateResourceCommandFromResourceAssembler
 {
-    public static UpdateResourceCommand ToCommandFromResource(int Id, UpdateResourceResource resource)
+    public static UpdateResourceCommand ToCommandFromResource(int resourceId, UpdateResourceResource resource)
     {
         return new UpdateResourceCommand(
-            Id,
+            resourceId,
             resource.Name,
             resource.KindOfResource,
             resource.ClassroomId

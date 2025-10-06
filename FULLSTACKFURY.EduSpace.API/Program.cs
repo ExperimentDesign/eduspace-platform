@@ -13,11 +13,6 @@ using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL;
 using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Hashing.BCrypt.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Persistence.EFC.Repositories;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Application.Internal.CommandServices;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Application.Internal.QueryServices;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Domain.Repositories;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Domain.Services;
-using FULLSTACKFURY.EduSpace.API.PayrollManagement.Infrastructure.Persistence.EFC.Repositories;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Pipeline.Middleware.Components;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Configuration;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Services;
@@ -49,7 +44,11 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.ACL.Serv
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using IExternalProfileService = FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices.IExternalProfileService;
-using DotNetEnv;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.CommandServices;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.QueryServices;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Services;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persistence.EFC.Repositories;
 
 DotNetEnv.Env.Load("../.env");
 
@@ -71,7 +70,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policyBuilder => policyBuilder
-            .WithOrigins("http://localhost:5173") // Your frontend URL
+            .WithOrigins("https://localhost:7238",
+                "https://eduspacewebapp.netlify.app")// Your frontend URL
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());
@@ -155,7 +155,6 @@ builder.Services.AddScoped<IAdminProfileRepository, AdminProfileRepository>();
 builder.Services.AddScoped<ITeacherProfileRepository, TeacherProfileRepository>();
 builder.Services.AddScoped<IAdminProfileCommandService, AdminProfileCommandService>();
 builder.Services.AddScoped<IAdminProfileQueryService, AdminProfileQueryService>();
-// builder.Services.AddScoped<IAdminProfileQueryService, AdminProfileQueryService>();
 builder.Services.AddScoped<ITeacherProfileCommandService, TeacherProfileCommandService>();
 builder.Services.AddScoped<ITeacherQueryService, TeacherProfileQueryService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
@@ -170,11 +169,9 @@ builder.Services.AddScoped<IExternalProfileService, ExternalProfileServices>();
 builder.Services.AddScoped<IProfilesContextFacade, ProfilesContextFacade>();
 builder.Services.AddScoped<IReservationQueryService, ReservationQueryService>();
 
-builder.Services.AddScoped<IPayrollCommandService, PayrollCommandService>();
-builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
-builder.Services.AddScoped<IPayrollQueryService, PayrollQueryService>();
-
-
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportCommandService, ReportCommandService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 
 //Reservation Scheduling
 
@@ -217,8 +214,6 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -236,17 +231,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-// app.UseRouting();
+app.UseHttpsRedirection();
 
 // Use the CORS policy
 app.UseCors("AllowFrontend");
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
-
 
 app.MapControllers();
 

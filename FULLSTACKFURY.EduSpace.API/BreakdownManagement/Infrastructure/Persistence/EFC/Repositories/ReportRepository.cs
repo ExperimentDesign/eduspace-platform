@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.ValueObjects;
 
 namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persistence.EFC.Repositories
 {
-    public class ReportRepository(AppDbContext context) 
-        : BaseRepository<Report>(context), IReportRepository
+    public class ReportRepository(AppDbContext context) : BaseRepository<Report>(context), IReportRepository
     {
         public async Task<Report> FindByIdAsync(int id)
         {
@@ -24,7 +24,9 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persiste
 
         public async Task<IEnumerable<Report>> FindAllByResourceIdAsync(int resourceId)
         {
-            return await Context.Set<Report>().Where(f => f.ResourceId.Id == resourceId).ToListAsync();
+            return await Context.Set<Report>()
+                .Where(r => r.ResourceId == new ResourceId(resourceId))
+                .ToListAsync();
         }
     }
 }

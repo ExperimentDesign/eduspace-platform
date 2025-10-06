@@ -13,7 +13,7 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Interface.REST.Transfor
                 entity.Description,
                 entity.ResourceId.Id, 
                 entity.CreatedAt,
-                entity.Status.ToString() 
+                entity.Status.Value
             );
         }
     }

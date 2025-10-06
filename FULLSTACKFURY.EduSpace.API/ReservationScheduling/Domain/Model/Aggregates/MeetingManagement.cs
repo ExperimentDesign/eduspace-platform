@@ -1,7 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Entities;
-using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.ValueObjects;
-using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Model.ValueObjects;
 using TeacherId = FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.ValueObjects.TeacherId;
 
 namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Aggregates;
@@ -13,9 +11,9 @@ public partial class Meeting
     [NotMapped]
     public TeacherId TeacherId { get; set; }
 
-public void AddTeacherToMeeting(int meetingId)
+public void AddTeacherToMeeting(int teacherId)
     {
-        MeetingParticipants.Add(new MeetingSession(meetingId, TeacherId.TeacherIdentifier));
+        MeetingParticipants.Add(new MeetingSession(teacherId, Id));
     }
 
 public void TeacherIdBuilder(int teacherId)
