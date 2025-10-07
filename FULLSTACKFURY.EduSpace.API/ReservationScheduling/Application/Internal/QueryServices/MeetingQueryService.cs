@@ -21,5 +21,9 @@ public class MeetingQueryService (IMeetingRepository meetingRepository) : IMeeti
     {
         return meetingRepository.FindAllByAdminIdAsync(query.AdminId);
     }
-    
+
+    public Task<IEnumerable<Meeting>> Handle(GetAllMeetingByTeacherIdQuery query)
+    {
+        return meetingRepository.FindAllByTeacherIdAsync(query.TeacherId);
+    }
 }

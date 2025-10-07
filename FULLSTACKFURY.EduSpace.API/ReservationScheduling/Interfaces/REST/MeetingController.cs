@@ -52,6 +52,20 @@ public class MeetingsController : ControllerBase
         var resources = meetings.Select(MeetingResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
+    
+    [HttpGet("teachers/{teacherId:int}/meetings")]
+    [SwaggerOperation(
+        Summary = "Gets all meetings for a teacher",
+        Description = "Retrieves a list of all meetings for a specific teacher",
+        OperationId = "GetAllMeetingsForTeacher"
+    )]
+    public async Task<IActionResult> GetAllMeetingsForTeacher(int teacherId)
+    {
+        var getAllMeetingsByTeacherIdQuery = new GetAllMeetingByTeacherIdQuery(teacherId);
+        var meetings = await meetingQueryService.Handle(getAllMeetingsByTeacherIdQuery);
+        var resources = meetings.Select(MeetingResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
+    }
  
 
     [HttpPut("meetings/{id:int}")]

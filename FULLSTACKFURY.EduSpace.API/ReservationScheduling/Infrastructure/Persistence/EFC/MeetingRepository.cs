@@ -25,4 +25,13 @@ public class MeetingRepository(AppDbContext context) : BaseRepository<Meeting>(c
                         .ThenInclude(mp => mp.Teacher)
                         .ToListAsync();
         }
+
+        public async Task<IEnumerable<Meeting>> FindAllByTeacherIdAsync(int teacherId)
+        {
+                return await Context.Set<Meeting>()
+                        .Include(m => m.MeetingParticipants)
+                        .ThenInclude(mp => mp.TeacherId)
+                        .Where(m => m.MeetingParticipants.Any(mp => mp.TeacherId == teacherId))
+                        .ToListAsync();
+        }
 }
