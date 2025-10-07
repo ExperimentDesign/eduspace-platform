@@ -3,13 +3,17 @@ using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Commands;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Repository;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Services;
+using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Repositories;
 using FULLSTACKFURY.EduSpace.API.Shared.Domain.Repositories;
+using FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.IAM.Application.Internal.CommandServices;
 
-public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository accountRepository
-    , ITokenService tokenService, IHashingService hashingService)
-:IAccountCommandService
+public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository accountRepository, 
+    ITokenService tokenService, IHashingService hashingService, IEmailService emailService,
+    ITeacherProfileRepository teacherProfileRepository, IAdminProfileRepository adminProfileRepository)
+    : IAccountCommandService
 {
     public async Task Handle(SignUpCommand command)
     {
@@ -29,18 +33,81 @@ public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository a
             throw new Exception($"An error occured while creating the account: {e.Message}");
         }
     }
-
-    //TODO: This should return a token
-    public async Task<(Account account, string token)> Handle(SignInCommand command)
+    
+    public async Task Handle(SignInCommand command)
     {
-        Console.WriteLine("AAAAAAAAAAAAAA");
-        Console.WriteLine(accountRepository.ExistsByUsername(command.Username));
         var account = await accountRepository.FindByUsername(command.Username);
-        if (account is null) throw new Exception("Invalid username or password");
-        if(!hashingService.VerifyPassword(command.Password, account.PasswordHash))
+        if (account is null || !hashingService.VerifyPassword(command.Password, account.PasswordHash))
+        {
             throw new Exception("Invalid username or password");
-        var token = tokenService.GenerateToken(account);
+        }
 
+        var random = new Random();
+        var code = random.Next(100000, 999999).ToString();
+
+        var verificationCode = new VerificationCode
+        {
+            AccountId = account.Id,
+            Code = code,
+            ExpirationDate = DateTime.UtcNow.AddMinutes(10),
+            IsUsed = false
+        };
+        
+        if (unitOfWork is UnitOfWork dbContextUnitOfWork)
+        {
+            await dbContextUnitOfWork._context.Set<VerificationCode>().AddAsync(verificationCode);
+            await unitOfWork.CompleteAsync();
+        }
+        else
+        {
+            throw new InvalidOperationException("The configured unit of work is not a supported type.");
+        }
+
+        string? userEmail = null;
+        var teacherProfiles = await teacherProfileRepository.ListAsync();
+        var teacher = teacherProfiles.FirstOrDefault(t => t.AccountId.Id == account.Id);
+        
+        if (teacher != null)
+        {
+            userEmail = teacher.ProfilePrivateInformation.ObtainEmail;
+        }
+        else
+        {
+             var adminProfiles = await adminProfileRepository.ListAsync();
+             var admin = adminProfiles.FirstOrDefault(a => a.AccountId.Id == account.Id);
+             if (admin != null)
+             {
+                 userEmail = admin.ProfilePrivateInformation.ObtainEmail;
+             }
+        }
+        
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            throw new Exception("User email not found.");
+        }
+
+        await emailService.SendEmailAsync(userEmail, "Tu código de verificación de EduSpace", $"Tu código es: {code}");
+    }
+
+    public async Task<(Account account, string token)> Handle(VerifyCodeCommand command)
+    {
+        var account = await accountRepository.FindByUsername(command.Username);
+        if (account is null) throw new Exception("Invalid username.");
+
+        if (unitOfWork is not UnitOfWork dbContextUnitOfWork)  throw new Exception("Database context not available");
+        
+        var verificationCode = await dbContextUnitOfWork._context.Set<VerificationCode>()
+            .FirstOrDefaultAsync(vc => vc.AccountId == account.Id && vc.Code == command.Code && !vc.IsUsed && vc.ExpirationDate > DateTime.UtcNow);
+
+        if (verificationCode is null)
+        {
+            throw new Exception("Invalid or expired verification code.");
+        }
+
+        verificationCode.IsUsed = true;
+        await unitOfWork.CompleteAsync();
+
+        var token = tokenService.GenerateToken(account);
         return (account, token);
     }
 }

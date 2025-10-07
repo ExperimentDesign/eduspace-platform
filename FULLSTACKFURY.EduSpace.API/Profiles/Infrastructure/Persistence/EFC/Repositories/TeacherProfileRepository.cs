@@ -19,4 +19,11 @@ public class TeacherProfileRepository(AppDbContext context) : BaseRepository<Tea
     {
         return Context.Set<TeacherProfile>().Any(teacherProfile => teacherProfile.Id == teacherProfileId);
     }
+
+    public override async Task<IEnumerable<TeacherProfile>> ListAsync()
+    {
+        return await Context.Set<TeacherProfile>()
+            .Include(p => p.AccountId)
+            .ToListAsync();
+    }
 }

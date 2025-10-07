@@ -5,7 +5,7 @@ namespace FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Repos
 
 public class UnitOfWork : IUnitOfWork
 {
-    private readonly AppDbContext _context;
+    internal readonly AppDbContext _context;
 
     public UnitOfWork(AppDbContext context)
     {

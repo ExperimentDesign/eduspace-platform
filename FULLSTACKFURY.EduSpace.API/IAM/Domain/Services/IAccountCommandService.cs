@@ -6,5 +6,6 @@ namespace FULLSTACKFURY.EduSpace.API.IAM.Domain.Services;
 public interface IAccountCommandService
 {
     Task Handle(SignUpCommand command);
-    Task<(Account account, string token)> Handle(SignInCommand command);
+    Task Handle(SignInCommand command);
+    Task<(Account account, string token)> Handle(VerifyCodeCommand command);
 }

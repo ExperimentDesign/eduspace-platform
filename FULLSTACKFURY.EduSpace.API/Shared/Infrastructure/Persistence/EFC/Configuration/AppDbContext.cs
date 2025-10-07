@@ -20,9 +20,18 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         base.OnConfiguring(builder);
     }
 
+    public DbSet<VerificationCode> VerificationCodes { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<VerificationCode>().HasKey(vc => vc.Id);
+        builder.Entity<VerificationCode>().Property(vc => vc.Id).IsRequired().ValueGeneratedOnAdd();
+        builder.Entity<VerificationCode>().Property(vc => vc.Code).IsRequired();
+        builder.Entity<VerificationCode>().Property(vc => vc.ExpirationDate).IsRequired();
+        builder.Entity<VerificationCode>().HasOne(vc => vc.Account)
+            .WithMany()
+            .HasForeignKey(vc => vc.AccountId);
 
         //Teacher Profiles Context
         builder.Entity<TeacherProfile>().HasKey(tp => tp.Id);
