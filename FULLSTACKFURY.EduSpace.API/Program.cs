@@ -71,10 +71,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionPolicy",
         policy =>
         {
-            policy.WithOrigins(
-                    "https://eduspacewebapp.netlify.app",
-                    "https://eduspace-frontend-web-app-production.up.railway.app"
-                    ) 
+            policy.WithOrigins("https://eduspacewebapp.netlify.app") 
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -244,8 +241,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Use the CORS policy
-app.UseCors("AllowFrontend");
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("DevelopmentPolicy");
+}
+else
+{
+    app.UseCors("ProductionPolicy");
+}
 
 app.UseAuthorization();
 
