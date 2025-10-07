@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{16BEC46D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eduspace.Core.Tests", "tests\Eduspace.Core.Tests\Eduspace.Core.Tests.csproj", "{47C7680E-2886-41AB-ABC0-1BD0FD396ABD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eduspace.Infrastructure.IntegrationTests", "tests\Eduspace.Infrastructure.IntegrationTests\Eduspace.Infrastructure.IntegrationTests.csproj", "{751D5C52-70EE-4198-AD86-6DAB2505434B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eduspace.Api.IntegrationTests", "tests\Eduspace.Api.IntegrationTests\Eduspace.Api.IntegrationTests.csproj", "{66B3BA64-18E8-4EED-9249-2B6E087C2564}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +25,18 @@ Global
 		{47C7680E-2886-41AB-ABC0-1BD0FD396ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47C7680E-2886-41AB-ABC0-1BD0FD396ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47C7680E-2886-41AB-ABC0-1BD0FD396ABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{751D5C52-70EE-4198-AD86-6DAB2505434B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{751D5C52-70EE-4198-AD86-6DAB2505434B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{751D5C52-70EE-4198-AD86-6DAB2505434B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{751D5C52-70EE-4198-AD86-6DAB2505434B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B3BA64-18E8-4EED-9249-2B6E087C2564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B3BA64-18E8-4EED-9249-2B6E087C2564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B3BA64-18E8-4EED-9249-2B6E087C2564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B3BA64-18E8-4EED-9249-2B6E087C2564}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{47C7680E-2886-41AB-ABC0-1BD0FD396ABD} = {16BEC46D-5C4A-4352-B888-65E2AAC9815C}
+		{751D5C52-70EE-4198-AD86-6DAB2505434B} = {16BEC46D-5C4A-4352-B888-65E2AAC9815C}
+		{66B3BA64-18E8-4EED-9249-2B6E087C2564} = {16BEC46D-5C4A-4352-B888-65E2AAC9815C}
 	EndGlobalSection
 EndGlobal
