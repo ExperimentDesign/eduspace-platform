@@ -42,7 +42,22 @@ public class AuthenticationController(IAccountCommandService accountCommandServi
         public async Task<IActionResult> SignIn([FromBody] SignInResource resource)
         {
             var signInCommand = SignInCommandFromResourceAssembler.ToCommandFromResource(resource);
-            var authenticatedAccount = await accountCommandService.Handle(signInCommand);
+            await accountCommandService.Handle(signInCommand);
+            return Ok(new { message = "Verification code sent to your email." });
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("verify-code")]
+        [SwaggerOperation(
+            Summary = "Verify Code and Sign In",
+            Description = "Verifies the 2FA code and returns a JWT if successful.",
+            OperationId = "VerifyCode",
+            Tags = new[] { "Authentication" })]
+        [SwaggerResponse(StatusCodes.Status200OK, "The user was authenticated.", typeof(AuthenticatedAccountResource))]
+        public async Task<IActionResult> VerifyCode([FromBody] VerifyCodeResource resource)
+        {
+            var verifyCodeCommand = VerifyCodeCommandFromResourceAssembler.ToCommandFromResource(resource);
+            var authenticatedAccount = await accountCommandService.Handle(verifyCodeCommand);
             var authenticatedAccountResource = AuthenticatedAccountResourceFromEntityAssembler
                 .ToResourceFromEntity(authenticatedAccount.account, authenticatedAccount.token);
             return Ok(authenticatedAccountResource);

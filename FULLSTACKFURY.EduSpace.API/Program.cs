@@ -49,6 +49,7 @@ using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.QueryS
 using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
 using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Services;
 using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persistence.EFC.Repositories;
+using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Services;
 
 DotNetEnv.Env.Load("../.env");
 
@@ -217,6 +218,7 @@ builder.Services.AddScoped<IAccountQueryService, AccountQueryService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
