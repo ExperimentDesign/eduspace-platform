@@ -68,16 +68,24 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        policyBuilder => policyBuilder
-            .WithOrigins("https://localhost:7238",
-                "https://eduspacewebapp.netlify.app")// Your frontend URL
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials());
+    options.AddPolicy("ProductionPolicy",
+        policy =>
+        {
+            policy.WithOrigins("https://eduspacewebapp.netlify.app") 
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+
+    options.AddPolicy("DevelopmentPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173") 
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
 });
-
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
@@ -233,8 +241,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Use the CORS policy
-app.UseCors("AllowFrontend");
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("DevelopmentPolicy");
+}
+else
+{
+    app.UseCors("ProductionPolicy");
+}
 
 app.UseAuthorization();
 
