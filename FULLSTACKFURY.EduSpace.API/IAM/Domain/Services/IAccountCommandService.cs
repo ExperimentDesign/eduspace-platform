@@ -7,5 +7,5 @@ public interface IAccountCommandService
 {
     Task Handle(SignUpCommand command);
     Task Handle(SignInCommand command);
-    Task<(Account account, string token)> Handle(VerifyCodeCommand command);
+    Task<(Account account, string token, int? profileId)> Handle(VerifyCodeCommand command);
 }

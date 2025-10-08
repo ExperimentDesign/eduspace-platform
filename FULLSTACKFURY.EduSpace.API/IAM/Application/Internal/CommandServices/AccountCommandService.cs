@@ -89,7 +89,7 @@ public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository a
         await emailService.SendEmailAsync(userEmail, "Tu código de verificación de EduSpace", $"Tu código es: {code}");
     }
 
-    public async Task<(Account account, string token)> Handle(VerifyCodeCommand command)
+    public async Task<(Account account, string token, int? profileId)> Handle(VerifyCodeCommand command)
     {
         var account = await accountRepository.FindByUsername(command.Username);
         if (account is null) throw new Exception("Invalid username.");
@@ -108,6 +108,19 @@ public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository a
         await unitOfWork.CompleteAsync();
 
         var token = tokenService.GenerateToken(account);
-        return (account, token);
+        
+        int? profileId = null;
+        if (account.GetRole() == "RoleTeacher")
+        {
+            var teacherProfile = await teacherProfileRepository.ListAsync().ContinueWith(t => t.Result.FirstOrDefault(p => p.AccountId.Id == account.Id));
+            profileId = teacherProfile?.Id;
+        }
+        else if (account.GetRole() == "RoleAdmin")
+        {
+            var adminProfile = await adminProfileRepository.ListAsync().ContinueWith(t => t.Result.FirstOrDefault(p => p.AccountId.Id == account.Id));
+            profileId = adminProfile?.Id;
+        }
+        
+        return (account, token, profileId);
     }
 }

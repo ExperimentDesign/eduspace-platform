@@ -11,7 +11,8 @@ public static class ReservationResourceFromEntityAssembler {
             entity.ReservationDate.Start,
             entity.ReservationDate.End,
             entity.Title,
-            entity.AreaId.Identifier // Corregido: antes era Id
+            entity.AreaId.Identifier,
+            entity.TeacherId.TeacherIdentifier
         );
     }
     

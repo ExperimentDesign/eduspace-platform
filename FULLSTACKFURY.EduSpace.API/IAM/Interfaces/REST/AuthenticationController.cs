@@ -59,7 +59,8 @@ public class AuthenticationController(IAccountCommandService accountCommandServi
             var verifyCodeCommand = VerifyCodeCommandFromResourceAssembler.ToCommandFromResource(resource);
             var authenticatedAccount = await accountCommandService.Handle(verifyCodeCommand);
             var authenticatedAccountResource = AuthenticatedAccountResourceFromEntityAssembler
-                .ToResourceFromEntity(authenticatedAccount.account, authenticatedAccount.token);
+                .ToResourceFromEntity(authenticatedAccount.account, authenticatedAccount.token,
+                    authenticatedAccount.profileId);
             return Ok(authenticatedAccountResource);
         }
 }
