@@ -30,7 +30,7 @@ public class MeetingRepository(AppDbContext context) : BaseRepository<Meeting>(c
         {
                 return await Context.Set<Meeting>()
                         .Include(m => m.MeetingParticipants)
-                        .ThenInclude(mp => mp.TeacherId)
+                        .ThenInclude(mp => mp.Teacher)
                         .Where(m => m.MeetingParticipants.Any(mp => mp.TeacherId == teacherId))
                         .ToListAsync();
         }
