@@ -22,6 +22,7 @@
         <!-- BCrypt Encryption related packages -->
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0-preview.4" />
+        <PackageReference Include="SendGrid" Version="9.29.3" />
         <!-- JSON Web Token related packages -->
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />

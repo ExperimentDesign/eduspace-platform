@@ -72,7 +72,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProductionPolicy",
         policy =>
         {
-            policy.WithOrigins("https://eduspacewebapp.netlify.app") 
+            policy.WithOrigins("https://eduspacewebapp.netlify.app",
+                    "https://eduspace-platform.onrender.com") 
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
