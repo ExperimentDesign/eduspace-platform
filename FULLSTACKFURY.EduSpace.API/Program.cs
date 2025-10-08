@@ -69,23 +69,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ProductionPolicy",
+    options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.WithOrigins("https://eduspacewebapp.netlify.app",
-                    "https://eduspace-platform.onrender.com") 
+            policy.SetIsOriginAllowed(origin => true)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
-        });
-
-    options.AddPolicy("DevelopmentPolicy",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5173") 
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowCredentials(); 
         });
 });
 
@@ -244,14 +234,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors("DevelopmentPolicy");
-}
-else
-{
-    app.UseCors("ProductionPolicy");
-}
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
