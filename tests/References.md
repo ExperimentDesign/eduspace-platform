@@ -1,6 +1,8 @@
-# Variables de conveniencia
+# paso1: Variables de conveniencia
 $DOTNET = "$env:USERPROFILE\dotnet\dotnet.exe"
 $TESTPROJ = "tests/Eduspace.Api.IntegrationTests"
+
+
 
 # Listar todas las pruebas detectadas
 & $DOTNET test $TESTPROJ --list-tests
@@ -21,10 +23,10 @@ $TESTPROJ = "tests/Eduspace.Api.IntegrationTests"
 # ResourcesControllerIT (2 integrales)
 & $DOTNET test $TESTPROJ --filter "FullyQualifiedName~Eduspace.Api.IntegrationTests.ResourcesControllerIT"
 
-# ReservationsEndpointsTests (los que ya tienes)
+# ReservationsEndpointsTests 
 & $DOTNET test $TESTPROJ --filter "FullyQualifiedName~Eduspace.Api.IntegrationTests.ReservationsEndpointsTests"
 
-# MeetingsController unit tests con Moq (si los quieres correr aparte)
+# MeetingsController unit tests con Moq (para correr aparte)
 & $DOTNET test $TESTPROJ --filter "FullyQualifiedName~Eduspace.Api.IntegrationTests.Controllers.MeetingsControllerTests"
 
 # ===== Por MÉTODO  =====
@@ -48,12 +50,25 @@ $TESTPROJ = "tests/Eduspace.Api.IntegrationTests"
 
 & $DOTNET test $TESTPROJ --filter "FullyQualifiedName=Eduspace.Api.IntegrationTests.ResourcesControllerIT.GetResourceById_NotExistingOrWrongClassroom_ReturnsNotFound"
 
-# ReservationsEndpointsTests (según tu salida)
+# ReservationsEndpointsTests 
 & $DOTNET test $TESTPROJ --filter "FullyQualifiedName=Eduspace.Api.IntegrationTests.ReservationsEndpointsTests.GetAllReservations_Returns_OK_And_Array"
 
 & $DOTNET test $TESTPROJ --filter "FullyQualifiedName=Eduspace.Api.IntegrationTests.ReservationsEndpointsTests.GetAllReservationsByArea_Returns_OK_And_Array"
 
-# MeetingsControllerTests (unitarios con Moq)
-& $DOTNET test $TESTPROJ --filter "FullyQualifiedName=Eduspace.Api.IntegrationTests.Controllers.MeetingsControllerTests.DeleteMeeting_Completa_RetornaOk"
 
-& $DOTNET test $TESTPROJ --filter "FullyQualifiedName=Eduspace.Api.IntegrationTests.Controllers.MeetingsControllerTests.DeleteMeeting_SiServiceLanzaArgumentException_RetornaNotFound"
+# pruebas unitarias
+
+# Ejecuta TODOS los tests del proyecto Core
+dotnet test tests/Eduspace.Core.Tests
+
+
+dotnet test tests/Eduspace.Core.Tests --filter "Name~AccountTests"
+dotnet test tests/Eduspace.Core.Tests --filter "Name~ClassroomTests"
+dotnet test tests/Eduspace.Core.Tests --filter "Name~MeetingTests"
+dotnet test tests/Eduspace.Core.Tests --filter "Name~ReservationTests"
+dotnet test tests/Eduspace.Core.Tests --filter "Name~TeacherProfileTests"
+# solo de prueba
+dotnet test tests/Eduspace.Core.Tests --filter "Name~SmokeTests"
+
+
+
