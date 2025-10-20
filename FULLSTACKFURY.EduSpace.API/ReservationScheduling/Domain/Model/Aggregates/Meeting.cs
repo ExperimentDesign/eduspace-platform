@@ -17,9 +17,16 @@ public partial class Meeting
     public AdministratorId AdministratorId { get; private set; }
     public ClassroomId ClassroomId { get; private set; }
 
-    public Meeting() { }
+    public Meeting()
+    {
+        Title = string.Empty;
+        Description = string.Empty;
+        AdministratorId = default!;
+        ClassroomId = default!;
+        TeacherId = default!;
+    }
     
-    public Meeting(string title, string description, DateOnly date, TimeOnly start, TimeOnly end, int administratorId, int classroomId)
+    public Meeting(string title, string description, DateOnly date, TimeOnly start, TimeOnly end, int administratorId, int classroomId) : this()
     {
         Title = title;
         Description = description;
@@ -30,7 +37,7 @@ public partial class Meeting
         ClassroomId = new ClassroomId(classroomId);
     }
 
-    public Meeting(CreateMeetingCommand command)
+    public Meeting(CreateMeetingCommand command) : this()
     {
         Title = command.Title;
         Description = command.Description;
@@ -41,7 +48,7 @@ public partial class Meeting
         ClassroomId = new ClassroomId(command.ClassroomId);
     }
 
-    public Meeting(UpdateMeetingCommand command)
+    public Meeting(UpdateMeetingCommand command) : this()
     {
         Description = command.Description;
         Date = command.Date;

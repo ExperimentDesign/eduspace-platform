@@ -13,11 +13,17 @@ public class MeetingSession
     public Meeting Meeting { get; set; }
     public TeacherProfile Teacher { get; set; }
 
-    public MeetingSession() { }
+    public MeetingSession()
+    {
+        Meeting = default!;
+        Teacher = default!;
+    }
 
     public MeetingSession(int teacherId, int meetingId)
     {
         TeacherId = teacherId;
         MeetingId = meetingId;
+        Meeting = default!;
+        Teacher = default!;
     }
 }

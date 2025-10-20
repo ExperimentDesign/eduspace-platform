@@ -14,7 +14,8 @@ public class MeetingQueryService (IMeetingRepository meetingRepository) : IMeeti
 
     public async Task<IEnumerable<Meeting>> Handle(GetMeetingByIdQuery query)
     {
-        return await meetingRepository.ListAsync();
+        var meeting = await meetingRepository.FindByIdAsync(query.MeetingId);
+        return meeting != null ? new List<Meeting> { meeting } : new List<Meeting>();
     }
 
     public Task<IEnumerable<Meeting>> Handle(GetAllMeetingByAdminIdQuery query)
