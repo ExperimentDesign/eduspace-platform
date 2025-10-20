@@ -24,10 +24,37 @@ public class AdminProfileCommandService(IAdminProfileRepository adminProfileRepo
             await unitOfWork.CompleteAsync();
             return adminProfile;    
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
             Console.WriteLine($"An error occurred while creating the profile: {e.Message}");
             return null;
         }
+    }
+
+    public async Task<AdminProfile?> Handle(UpdateAdminProfileCommand command)
+    {
+        var adminProfile = await adminProfileRepository.FindByIdAsync(command.Id);
+        if (adminProfile == null)
+        {
+            throw new ArgumentException($"Admin profile with ID {command.Id} not found.");
+        }
+
+        adminProfile.Update(command);
+        adminProfileRepository.Update(adminProfile);
+        await unitOfWork.CompleteAsync();
+
+        return adminProfile;
+    }
+
+    public async Task Handle(DeleteAdminProfileCommand command)
+    {
+        var adminProfile = await adminProfileRepository.FindByIdAsync(command.Id);
+        if (adminProfile == null)
+        {
+            throw new ArgumentException($"Admin profile with ID {command.Id} not found.");
+        }
+
+        adminProfileRepository.Remove(adminProfile);
+        await unitOfWork.CompleteAsync();
     }
 }

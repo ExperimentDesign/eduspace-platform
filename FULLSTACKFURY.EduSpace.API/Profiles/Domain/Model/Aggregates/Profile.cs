@@ -7,9 +7,9 @@ namespace FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 public class Profile : IEntityWithCreatedUpdatedDate
 {
     public int Id { get; }
-    public ProfileName ProfileName {get; private set; }
-    public ProfilePrivateInformation ProfilePrivateInformation { get; private set; }
-    
+    public ProfileName ProfileName {get; protected set; }
+    public ProfilePrivateInformation ProfilePrivateInformation { get; protected set; }
+
     public AccountId AccountId { get; private set; }
     
     [Column("CreatedAt")] public DateTimeOffset? CreatedDate { get; set; }
@@ -28,6 +28,7 @@ public class Profile : IEntityWithCreatedUpdatedDate
     {
         ProfileName = new ProfileName();
         ProfilePrivateInformation = new ProfilePrivateInformation();
+        AccountId = default!;
     }
     
     public string ProfileFullName => ProfileName.FullName;

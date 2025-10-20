@@ -29,4 +29,31 @@ public class TeacherProfileCommandService(ITeacherProfileRepository teacherProfi
             return null;
         }
     }
+
+    public async Task<TeacherProfile?> Handle(UpdateTeacherProfileCommand command)
+    {
+        var teacherProfile = await teacherProfileRepository.FindByIdAsync(command.Id);
+        if (teacherProfile == null)
+        {
+            throw new ArgumentException($"Teacher profile with ID {command.Id} not found.");
+        }
+
+        teacherProfile.Update(command);
+        teacherProfileRepository.Update(teacherProfile);
+        await unitOfWork.CompleteAsync();
+
+        return teacherProfile;
+    }
+
+    public async Task Handle(DeleteTeacherProfileCommand command)
+    {
+        var teacherProfile = await teacherProfileRepository.FindByIdAsync(command.Id);
+        if (teacherProfile == null)
+        {
+            throw new ArgumentException($"Teacher profile with ID {command.Id} not found.");
+        }
+
+        teacherProfileRepository.Remove(teacherProfile);
+        await unitOfWork.CompleteAsync();
+    }
 }

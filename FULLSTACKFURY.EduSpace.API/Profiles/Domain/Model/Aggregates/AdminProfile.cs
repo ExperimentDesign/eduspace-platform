@@ -19,6 +19,13 @@ public class AdminProfile : Profile
 
     public AdminProfile()
     {
-        
+
+    }
+
+    public AdminProfile Update(UpdateAdminProfileCommand command)
+    {
+        ProfileName = new ProfileName(command.FirstName, command.LastName);
+        ProfilePrivateInformation = new ProfilePrivateInformation(command.Email, command.Dni, command.Address, command.Phone);
+        return this;
     }
 }
