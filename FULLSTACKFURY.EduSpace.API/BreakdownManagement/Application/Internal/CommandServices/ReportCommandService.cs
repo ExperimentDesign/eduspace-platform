@@ -32,6 +32,31 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.Co
             }
         }
 
-        // Puedes agregar más métodos según sea necesario para actualizar el estado, etc.
+        public async Task<Report?> Handle(UpdateReportCommand command)
+        {
+            var report = await _reportRepository.FindByIdAsync(command.Id);
+            if (report == null)
+            {
+                throw new ArgumentException($"Report with ID {command.Id} not found.");
+            }
+
+            report.Update(command);
+            _reportRepository.Update(report);
+            await _unitOfWork.CompleteAsync();
+
+            return report;
+        }
+
+        public async Task Handle(DeleteReportCommand command)
+        {
+            var report = await _reportRepository.FindByIdAsync(command.Id);
+            if (report == null)
+            {
+                throw new ArgumentException($"Report with ID {command.Id} not found.");
+            }
+
+            _reportRepository.Remove(report);
+            await _unitOfWork.CompleteAsync();
+        }
     }
 }

@@ -17,9 +17,10 @@ public record Report
         KindOfReport = string.Empty;
         Description = string.Empty;
         Status = ReportStatus.EnProceso;
+        ResourceId = default!;
     }
 
-    public Report(string kindOfReport, string description, int resourceId, DateTime createdAt, ReportStatus status = null)
+    public Report(string kindOfReport, string description, int resourceId, DateTime createdAt, ReportStatus? status = null)
     {
         KindOfReport = kindOfReport;
         Description = description;
@@ -35,5 +36,13 @@ public record Report
         ResourceId = new ResourceId(command.ResourceId);
         CreatedAt = command.CreatedAt;
         Status = ReportStatus.EnProceso; // Default status
+    }
+
+    public Report Update(UpdateReportCommand command)
+    {
+        KindOfReport = command.KindOfReport;
+        Description = command.Description;
+        Status = ReportStatus.FromString(command.Status);
+        return this;
     }
 }

@@ -7,7 +7,7 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories
 {
     public interface IReportRepository : IBaseRepository<Report>
     {
-        Task<Report> FindByIdAsync(int id);
+
 
         Task<IEnumerable<Report>> FindAllAsync();
 

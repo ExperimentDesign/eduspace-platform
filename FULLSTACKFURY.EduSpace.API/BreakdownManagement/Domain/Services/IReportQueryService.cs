@@ -7,5 +7,6 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Services
     {
         Task<IEnumerable<Report>> Handle(GetAllReportsQuery query);
         Task<IEnumerable<Report>> Handle(GetAllReportsByResourceIdQuery query);
+        Task<Report?> Handle(GetReportByIdQuery query);
     }
 }

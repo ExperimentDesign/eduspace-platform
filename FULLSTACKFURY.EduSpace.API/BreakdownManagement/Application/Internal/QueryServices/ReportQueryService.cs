@@ -23,4 +23,9 @@ public class ReportQueryService : IReportQueryService
     {
         return _reportRepository.FindAllByResourceIdAsync(query.ResourceId);
     }
+
+    public async Task<Report?> Handle(GetReportByIdQuery query)
+    {
+        return await _reportRepository.FindByIdAsync(query.Id);
+    }
 }

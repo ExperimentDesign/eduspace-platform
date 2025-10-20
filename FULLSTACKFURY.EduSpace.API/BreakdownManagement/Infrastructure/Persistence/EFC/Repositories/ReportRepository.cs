@@ -12,7 +12,7 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persiste
 {
     public class ReportRepository(AppDbContext context) : BaseRepository<Report>(context), IReportRepository
     {
-        public async Task<Report> FindByIdAsync(int id)
+        public override async Task<Report?> FindByIdAsync(int id)
         {
             return await Context.Set<Report>().FindAsync(id);
         }

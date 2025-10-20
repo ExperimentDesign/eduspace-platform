@@ -52,4 +52,73 @@ public class ReportsController(IReportCommandService reportCommandService, IRepo
 
         return Ok(resources);
     }
+
+    [HttpGet("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Get report by ID",
+        Description = "Gets a specific report by its ID",
+        OperationId = "GetReportById"
+    )]
+    [SwaggerResponse(200, "Report retrieved successfully", typeof(ReportResource))]
+    [SwaggerResponse(404, "Report not found")]
+    public async Task<IActionResult> GetReportById([FromRoute] int id)
+    {
+        var query = new GetReportByIdQuery(id);
+        var report = await reportQueryService.Handle(query);
+
+        if (report is null)
+            return NotFound(new { Message = "Report not found." });
+
+        var resource = ReportResourceFromEntityAssembler.ToResourceFromEntity(report);
+        return Ok(resource);
+    }
+
+    [HttpPut("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Update a report",
+        Description = "Updates a report with the provided information",
+        OperationId = "UpdateReport"
+    )]
+    [SwaggerResponse(200, "Report updated successfully", typeof(ReportResource))]
+    [SwaggerResponse(404, "Report not found")]
+    public async Task<IActionResult> UpdateReport([FromRoute] int id, [FromBody] UpdateReportResource resource)
+    {
+        try
+        {
+            var updateCommand = UpdateReportCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var updatedReport = await reportCommandService.Handle(updateCommand);
+
+            if (updatedReport is null)
+                return NotFound(new { Message = "Report not found." });
+
+            var reportResource = ReportResourceFromEntityAssembler.ToResourceFromEntity(updatedReport);
+            return Ok(reportResource);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(new { Message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Delete a report",
+        Description = "Deletes a report by its ID",
+        OperationId = "DeleteReport"
+    )]
+    [SwaggerResponse(200, "Report deleted successfully")]
+    [SwaggerResponse(404, "Report not found")]
+    public async Task<IActionResult> DeleteReport([FromRoute] int id)
+    {
+        try
+        {
+            var deleteCommand = new DeleteReportCommand(id);
+            await reportCommandService.Handle(deleteCommand);
+            return Ok(new { Message = $"Report with ID {id} was deleted successfully." });
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(new { Message = ex.Message });
+        }
+    }
 }
