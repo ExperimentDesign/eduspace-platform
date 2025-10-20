@@ -21,4 +21,9 @@ public class ReservationQueryService (IReservationRepository reservationReposito
     {
         return reservationRepository.FindAllByAreaIdMonthAndDayAsync(query.AreaId, query.Month, query.Day);
     }
+
+    public async Task<Reservation?> Handle(GetReservationByIdQuery query)
+    {
+        return await reservationRepository.FindByIdAsync(query.Id);
+    }
 }

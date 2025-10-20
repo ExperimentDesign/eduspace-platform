@@ -42,11 +42,39 @@ public class ReservationCommandService(IReservationRepository reservationReposit
         }
     }
 
-    public async void Handle(DeleteReservationCommand command)
+    public async Task<Reservation?> Handle(UpdateReservationCommand command)
+    {
+        var reservation = await reservationRepository.FindByIdAsync(command.Id);
+        if (reservation == null)
+        {
+            throw new ArgumentException($"Reservation with ID {command.Id} not found.");
+        }
+
+        // Validate time conflicts
+        var reservationsOfTheDay = await reservationRepository.FindAllByAreaIdMonthAndDayAsync(
+            reservation.AreaId.Identifier, command.Start.Month, command.Start.Day);
+
+        var otherReservations = reservationsOfTheDay.Where(r => r.Id != command.Id).ToList();
+        var tempReservation = new Reservation(command.Title, command.Start, command.End, reservation.AreaId.Identifier, reservation.TeacherId.TeacherIdentifier);
+
+        if (!tempReservation.CanReserve(otherReservations))
+        {
+            throw new Exception("Reservation cannot be updated. Time slot conflicts with existing reservations.");
+        }
+
+        reservation.Update(command);
+        reservationRepository.Update(reservation);
+        await unitOfWork.CompleteAsync();
+
+        return reservation;
+    }
+
+    public async Task Handle(DeleteReservationCommand command)
     {
         var reservation = await reservationRepository.FindByIdAsync(command.ReservationId);
-        if(reservation == null) throw new Exception("The reservation does not exist");
+        if(reservation == null) throw new ArgumentException("The reservation does not exist");
 
         reservationRepository.Remove(reservation);
+        await unitOfWork.CompleteAsync();
     }
 }

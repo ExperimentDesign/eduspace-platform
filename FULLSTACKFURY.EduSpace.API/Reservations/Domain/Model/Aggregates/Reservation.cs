@@ -14,7 +14,9 @@ public class Reservation
     public Reservation()
     {
         ReservationDate = new ReservationDate();
-
+        Title = string.Empty;
+        AreaId = default!;
+        TeacherId = default!;
     }
     public Reservation(string title, DateTime start, DateTime end, int areaId, int teacherId)
     {
@@ -47,5 +49,12 @@ public class Reservation
         return existingReservations.All(r =>
             (ReservationDate.Start < r.ReservationDate.Start || ReservationDate.Start > r.ReservationDate.End) &&
             (ReservationDate.End < r.ReservationDate.Start || ReservationDate.End > r.ReservationDate.End));
+    }
+
+    public Reservation Update(UpdateReservationCommand command)
+    {
+        Title = command.Title;
+        ReservationDate = new ReservationDate(command.Start, command.End);
+        return this;
     }
 }

@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Model.Commands;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Model.Queries;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Services;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Interface.REST.Resources;
@@ -53,12 +54,77 @@ public class ReservationsController(IReservationCommandService reservationComman
 
         return Ok(resources);
     }
-    //
-    // [HttpGet("areas/{areaId:int}")]
-    // public async Task<IActionResult> GetAllReservationsByAreaIdMonthAndDay(int areaId, [FromQuery] int month,
-    //     [FromQuery] int day)
-    // {
-    //     var getAllReservationsByAreaIdMonthAndDayQuery = new GetAllReservationsByAreaIdAn
-    // }
-    //
+
+    [HttpGet("[controller]/{id:int}")]
+    [SwaggerOperation(
+        Summary = "Get reservation by ID",
+        Description = "Gets a specific reservation by its ID",
+        OperationId = "GetReservationById"
+    )]
+    [SwaggerResponse(200, "Reservation retrieved successfully", typeof(ReservationResource))]
+    [SwaggerResponse(404, "Reservation not found")]
+    public async Task<IActionResult> GetReservationById([FromRoute] int id)
+    {
+        var query = new GetReservationByIdQuery(id);
+        var reservation = await reservationQueryService.Handle(query);
+
+        if (reservation is null)
+            return NotFound(new { Message = "Reservation not found." });
+
+        var resource = ReservationResourceFromEntityAssembler.ToResourceFromEntity(reservation);
+        return Ok(resource);
+    }
+
+    [HttpPut("[controller]/{id:int}")]
+    [SwaggerOperation(
+        Summary = "Update a reservation",
+        Description = "Updates a reservation with the provided information",
+        OperationId = "UpdateReservation"
+    )]
+    [SwaggerResponse(200, "Reservation updated successfully", typeof(ReservationResource))]
+    [SwaggerResponse(404, "Reservation not found")]
+    public async Task<IActionResult> UpdateReservation([FromRoute] int id, [FromBody] UpdateReservationResource resource)
+    {
+        try
+        {
+            var updateCommand = UpdateReservationCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var updatedReservation = await reservationCommandService.Handle(updateCommand);
+
+            if (updatedReservation is null)
+                return NotFound(new { Message = "Reservation not found." });
+
+            var reservationResource = ReservationResourceFromEntityAssembler.ToResourceFromEntity(updatedReservation);
+            return Ok(reservationResource);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(new { Message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
+    [HttpDelete("[controller]/{id:int}")]
+    [SwaggerOperation(
+        Summary = "Delete a reservation",
+        Description = "Deletes a reservation by its ID",
+        OperationId = "DeleteReservation"
+    )]
+    [SwaggerResponse(200, "Reservation deleted successfully")]
+    [SwaggerResponse(404, "Reservation not found")]
+    public async Task<IActionResult> DeleteReservation([FromRoute] int id)
+    {
+        try
+        {
+            var deleteCommand = new DeleteReservationCommand(id);
+            await reservationCommandService.Handle(deleteCommand);
+            return Ok(new { Message = $"Reservation with ID {id} was deleted successfully." });
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(new { Message = ex.Message });
+        }
+    }
 }
