@@ -32,5 +32,9 @@ public class Account
     
     public string GetRole() => Role.ToString();
 
-    public Account() { }
+    public Account()
+    {
+        Username = string.Empty;
+        PasswordHash = string.Empty;
+    }
 }

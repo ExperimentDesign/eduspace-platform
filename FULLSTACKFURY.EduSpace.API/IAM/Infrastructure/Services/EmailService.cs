@@ -21,10 +21,10 @@ public class EmailService : IEmailService
     {
         try
         {
-            var smtpHost = "smtp.gmail.com";
-            var smtpPort = 587;
-            var smtpUser = "eduspace.verify@gmail.com";
-            var smtpPass = "twsfnolkmpoirvnl";
+            var smtpHost = _configuration["SMTP_HOST"] ?? throw new InvalidOperationException("SMTP_HOST not configured");
+            var smtpPort = int.Parse(_configuration["SMTP_PORT"] ?? "587");
+            var smtpUser = _configuration["SMTP_USER"] ?? throw new InvalidOperationException("SMTP_USER not configured");
+            var smtpPass = _configuration["SMTP_PASSWORD"] ?? throw new InvalidOperationException("SMTP_PASSWORD not configured");
 
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(smtpUser));

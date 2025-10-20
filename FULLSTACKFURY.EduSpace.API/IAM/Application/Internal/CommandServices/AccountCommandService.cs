@@ -3,16 +3,24 @@ using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Commands;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Repository;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Services;
+using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Repositories;
+using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Aggregates;
+using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Queries;
+using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Services;
 using FULLSTACKFURY.EduSpace.API.Shared.Domain.Repositories;
 using FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Repositories;
+using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Model.Aggregates;
+using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Model.Queries;
+using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.IAM.Application.Internal.CommandServices;
 
-public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository accountRepository, 
+public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository accountRepository,
     ITokenService tokenService, IHashingService hashingService, IEmailService emailService,
-    ITeacherProfileRepository teacherProfileRepository, IAdminProfileRepository adminProfileRepository)
+    ITeacherProfileRepository teacherProfileRepository, IAdminProfileRepository adminProfileRepository,
+    IClassroomQueryService classroomQueryService, IMeetingQueryService meetingQueryService)
     : IAccountCommandService
 {
     public async Task Handle(SignUpCommand command)
@@ -89,13 +97,13 @@ public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository a
         await emailService.SendEmailAsync(userEmail, "Tu código de verificación de EduSpace", $"Tu código es: {code}");
     }
 
-    public async Task<(Account account, string token, int? profileId)> Handle(VerifyCodeCommand command)
+    public async Task<(Account account, string token, int? profileId, TeacherProfile? teacherProfile, AdminProfile? adminProfile, IEnumerable<Classroom>? classrooms, IEnumerable<Meeting>? meetings)> Handle(VerifyCodeCommand command)
     {
         var account = await accountRepository.FindByUsername(command.Username);
         if (account is null) throw new Exception("Invalid username.");
 
         if (unitOfWork is not UnitOfWork dbContextUnitOfWork)  throw new Exception("Database context not available");
-        
+
         var verificationCode = await dbContextUnitOfWork._context.Set<VerificationCode>()
             .FirstOrDefaultAsync(vc => vc.AccountId == account.Id && vc.Code == command.Code && !vc.IsUsed && vc.ExpirationDate > DateTime.UtcNow);
 
@@ -108,19 +116,30 @@ public class AccountCommandService (IUnitOfWork unitOfWork, IAccountRepository a
         await unitOfWork.CompleteAsync();
 
         var token = tokenService.GenerateToken(account);
-        
+
         int? profileId = null;
+        TeacherProfile? teacherProfile = null;
+        AdminProfile? adminProfile = null;
+        IEnumerable<Classroom>? classrooms = null;
+        IEnumerable<Meeting>? meetings = null;
+
         if (account.GetRole() == "RoleTeacher")
         {
-            var teacherProfile = await teacherProfileRepository.ListAsync().ContinueWith(t => t.Result.FirstOrDefault(p => p.AccountId.Id == account.Id));
+            teacherProfile = await teacherProfileRepository.ListAsync().ContinueWith(t => t.Result.FirstOrDefault(p => p.AccountId.Id == account.Id));
             profileId = teacherProfile?.Id;
+
+            if (teacherProfile != null)
+            {
+                classrooms = await classroomQueryService.Handle(new GetAllClassroomsByTeacherIdQuery(teacherProfile.Id));
+                meetings = await meetingQueryService.Handle(new GetAllMeetingByTeacherIdQuery(teacherProfile.Id));
+            }
         }
         else if (account.GetRole() == "RoleAdmin")
         {
-            var adminProfile = await adminProfileRepository.ListAsync().ContinueWith(t => t.Result.FirstOrDefault(p => p.AccountId.Id == account.Id));
+            adminProfile = await adminProfileRepository.ListAsync().ContinueWith(t => t.Result.FirstOrDefault(p => p.AccountId.Id == account.Id));
             profileId = adminProfile?.Id;
         }
-        
-        return (account, token, profileId);
+
+        return (account, token, profileId, teacherProfile, adminProfile, classrooms, meetings);
     }
 }

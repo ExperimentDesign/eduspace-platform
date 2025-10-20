@@ -9,4 +9,10 @@ public class VerificationCode
     public bool IsUsed { get; set; }
 
     public Account Account { get; set; }
+
+    public VerificationCode()
+    {
+        Code = default!;
+        Account = default!;
+    }
 }
