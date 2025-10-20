@@ -17,4 +17,4 @@ namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST
 /// <param name="Classroom">
 /// The <see cref="ClassroomResource"/> classroom of the resource.
 /// </param>
-public record ResourceResource(int Id, string Name, string KindOfResource, ClassroomResource Classroom); 
+public record ResourceResource(int Id, string Name, string KindOfResource, ClassroomResource? Classroom); 

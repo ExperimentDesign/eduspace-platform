@@ -18,7 +18,7 @@ public class ResourceRepository(AppDbContext context): BaseRepository<Resource>(
     }
     
     // inheritedDoc
-    public new async Task<Resource?> FindByIdAsync(int id)
+    public override async Task<Resource?> FindByIdAsync(int id)
     {
         return await Context.Set<Resource>()
             .Include(resource => resource.Classroom)
@@ -26,7 +26,7 @@ public class ResourceRepository(AppDbContext context): BaseRepository<Resource>(
     }
     
     // inheritedDoc
-    public async Task<IEnumerable<Resource>> ListAsync()
+    public override async Task<IEnumerable<Resource>> ListAsync()
     {
         return await Context.Set<Resource>()
             .Include(resource => resource.Classroom)

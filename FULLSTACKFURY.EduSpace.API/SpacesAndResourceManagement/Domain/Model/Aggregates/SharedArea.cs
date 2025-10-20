@@ -20,6 +20,8 @@ public partial class SharedArea
     /// </summary>
     public SharedArea()
     {
+        Name = string.Empty;
+        Description = string.Empty;
     }
     
     /// <param name="name">

@@ -34,7 +34,12 @@ public partial class Classroom
     /// The teacher id for the classroom
     /// </param>
     
-    public Classroom() {}
+    public Classroom()
+    {
+        Name = string.Empty;
+        Description = string.Empty;
+        TeacherId = default!;
+    }
     public Classroom(string name, string description, int teacherId)
     {
         Name = name;

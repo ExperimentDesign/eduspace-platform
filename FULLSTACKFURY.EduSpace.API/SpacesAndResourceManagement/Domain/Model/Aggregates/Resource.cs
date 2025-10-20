@@ -21,7 +21,12 @@ public class Resource
     /// <summary>
     /// Default constructor for the classroom entity
     /// </summary>
-    public Resource() {}
+    public Resource()
+    {
+        Name = string.Empty;
+        KindOfResource = string.Empty;
+        Classroom = default!;
+    }
     
     /// <param name="name">
     /// The name of the resource
@@ -39,14 +44,14 @@ public class Resource
         ClassroomId = classroomId;
     }
     
-    public Resource(CreateResourceCommand command)
+    public Resource(CreateResourceCommand command) : this()
     {
         Name = command.Name;
         KindOfResource = command.KindOfResource;
         ClassroomId = command.ClassroomId;
     }
     
-    public Resource(UpdateResourceCommand command)
+    public Resource(UpdateResourceCommand command) : this()
     {
         Id = command.Id;
         Name = command.Name;

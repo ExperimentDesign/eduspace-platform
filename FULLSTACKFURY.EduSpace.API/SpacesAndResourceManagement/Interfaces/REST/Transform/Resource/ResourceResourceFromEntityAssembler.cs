@@ -20,6 +20,6 @@ public class ResourceResourceFromEntityAssembler
     public static ResourceResource ToResourceFromEntity(Domain.Model.Aggregates.Resource entity)
     {
         var classroomResource = entity.Classroom != null ? ClassroomResourceFromEntityAssembler.ToResourceFromEntity(entity.Classroom) : null;
-        return new ResourceResource(entity.Id, entity.Name, entity.KindOfResource, ClassroomResourceFromEntityAssembler.ToResourceFromEntity(entity.Classroom));
+        return new ResourceResource(entity.Id, entity.Name, entity.KindOfResource, classroomResource);
     }
 }
