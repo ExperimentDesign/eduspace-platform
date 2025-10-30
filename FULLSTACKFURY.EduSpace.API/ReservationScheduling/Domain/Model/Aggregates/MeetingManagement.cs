@@ -16,6 +16,16 @@ public void AddTeacherToMeeting(int teacherId)
         MeetingParticipants.Add(new MeetingSession(teacherId, Id));
     }
 
+    public bool RemoveTeacherFromMeeting(int teacherId)
+    {
+        var participant = MeetingParticipants.FirstOrDefault(mp => mp.TeacherId == teacherId);
+        if (participant == null)
+            return false;
+
+        MeetingParticipants.Remove(participant);
+        return true;
+    }
+
 public void TeacherIdBuilder(int teacherId)
     {
         TeacherId = new TeacherId(teacherId);

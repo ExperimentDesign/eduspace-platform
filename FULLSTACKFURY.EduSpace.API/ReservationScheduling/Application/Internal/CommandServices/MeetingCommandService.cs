@@ -64,23 +64,35 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
     public async Task Handle(AddTeacherToMeetingCommand command)
     {
         var meeting = await meetingRepository.FindByIdAsync(command.MeetingId);
-        
+
         if (meeting == null)
             throw new ArgumentException("Meeting not found.");
         if (!externalProfileService.ValidateTeacherExistence(command.TeacherId))
             throw new ArgumentException("Teacher does not exist.");
-        
-        try
-        {
-            meeting.TeacherIdBuilder(command.TeacherId);
-            meeting.AddTeacherToMeeting(command.TeacherId);
-            meetingRepository.Update(meeting);
-            await unitOfWork.CompleteAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+
+        if (meeting.MeetingParticipants.Any(mp => mp.TeacherId == command.TeacherId))
+            throw new ArgumentException("Teacher is already part of this meeting.");
+
+        meeting.AddTeacherToMeeting(command.TeacherId);
+
+        await unitOfWork.CompleteAsync();
+    }
+
+    public async Task Handle(RemoveTeacherFromMeetingCommand command)
+    {
+        var meeting = await meetingRepository.FindByIdAsync(command.MeetingId);
+
+        if (meeting == null)
+            throw new ArgumentException("Meeting not found.");
+
+        if (!externalProfileService.ValidateTeacherExistence(command.TeacherId))
+            throw new ArgumentException("Teacher does not exist.");
+
+        var removed = meeting.RemoveTeacherFromMeeting(command.TeacherId);
+
+        if (!removed)
+            throw new ArgumentException("Teacher is not associated with this meeting.");
+
+        await unitOfWork.CompleteAsync();
     }
 }

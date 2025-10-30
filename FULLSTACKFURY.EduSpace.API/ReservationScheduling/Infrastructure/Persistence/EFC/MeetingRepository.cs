@@ -9,6 +9,14 @@ namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Infrastructure.Persis
 
 public class MeetingRepository(AppDbContext context) : BaseRepository<Meeting>(context), IMeetingRepository
 {
+        public override async Task<Meeting?> FindByIdAsync(int id)
+        {
+                return await Context.Set<Meeting>()
+                        .Include(m => m.MeetingParticipants)
+                        .ThenInclude(mp => mp.Teacher)
+                        .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
         public async Task<IEnumerable<Meeting>> FindAllByAdminIdAsync(int adminId)
         {
                 return await Context.Set<Meeting>()
