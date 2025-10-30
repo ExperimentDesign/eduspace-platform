@@ -189,7 +189,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .HasOne(ms => ms.Teacher)
             .WithMany()
             .HasForeignKey(ms => ms.TeacherId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         
         // breakdown Management Context
         builder.Entity<Report>().HasKey(r => r.Id);
