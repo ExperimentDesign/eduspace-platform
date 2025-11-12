@@ -223,7 +223,16 @@ builder.Services.AddScoped<IAccountQueryService, AccountQueryService>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Register EmailService based on environment
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddScoped<IEmailService, MockEmailService>();
+}
+else
+{
+    builder.Services.AddScoped<IEmailService, EmailService>();
+}
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

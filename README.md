@@ -196,42 +196,56 @@ cd eduspace-platform
 
 #### 2. Configure Environment Variables
 
-Create a `.env` file in the project root:
+Copy the `.env.example` file and configure your environment variables:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file with your credentials:
 
 ```env
-MYSQL_PORT=3306
-MYSQL_DATABASE=eduspace
-MYSQL_USER=root
-MYSQL_PASSWORD=your_secure_password
+# Database
+MYSQL_ROOT_PASSWORD=your_root_password
+MYSQL_DATABASE=eduspacedb
+MYSQL_USER=eduspace
+MYSQL_PASSWORD=your_mysql_password
+MYSQL_PORT=3308
+
+ConnectionStrings__DefaultConnection=server=localhost;port=3308;user=eduspace;password=your_mysql_password;database=eduspacedb;AllowPublicKeyRetrieval=true;SslMode=none
+
+# Email (SendGrid or Gmail)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+SENDGRID_FROM_EMAIL=noreply@yourdomain.com
+SENDGRID_FROM_NAME=EduSpace Platform
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:4200
 ```
 
 #### 3. Configure Application Settings
 
-Edit `FULLSTACKFURY.EduSpace.API/appsettings.json`:
+The `appsettings.json` file contains default values. Real credentials should be set in the `.env` file, which will override these settings
 
-```json
-{
-  "TokenSettings": {
-    "Secret": "YourSuperSecretKeyForJWTTokenGeneration_AtLeast32Characters!"
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Port=3306;Database=eduspace;Uid=root;Pwd=your_secure_password;"
-  },
-  "SMTP_HOST": "smtp.gmail.com",
-  "SMTP_PORT": "587",
-  "SMTP_USER": "your-email@gmail.com",
-  "SMTP_PASSWORD": "your-app-password",
-  "CORS_ALLOWED_ORIGINS": "http://localhost:3000,http://localhost:4200"
-}
+#### 4. Start MySQL Database
+
+```bash
+# Start MySQL with Docker Compose
+docker-compose up -d
 ```
 
-#### 4. Restore Dependencies
+#### 5. Restore Dependencies
 
 ```bash
 dotnet restore
 ```
 
-#### 5. Run the Application
+#### 6. Run the Application
 
 ```bash
 dotnet run --project FULLSTACKFURY.EduSpace.API/FULLSTACKFURY.EduSpace.API.csproj
@@ -480,63 +494,67 @@ The application uses **EnsureCreated()** instead of traditional migrations. The 
 
 **Connection String Format:**
 ```
-Server=localhost;Port=3306;Database=eduspace;Uid=root;Pwd=password;
+server=localhost;port=3308;user=eduspace;password=your_password;database=eduspacedb;AllowPublicKeyRetrieval=true;SslMode=none
 ```
+
+**Note:** Set this in your `.env` file using the variable `ConnectionStrings__DefaultConnection`
 
 ### JWT Token Settings
 
-Configure JWT secret in `appsettings.json`:
+The JWT secret is configured in `appsettings.json` with a default placeholder value:
 
 ```json
 {
   "TokenSettings": {
-    "Secret": "YourSecretMustBeAtLeast32CharactersLongForHS256!"
+    "Secret": "your-jwt-secret-key-here-minimum-32-characters-recommended"
   }
 }
 ```
 
-**Important**: Use a strong, random secret in production (minimum 32 characters).
+**Important**:
+- Change this value in production to a strong, random secret (minimum 32 characters)
+- You can also set it via environment variable if needed
+- Never commit real secrets to version control
 
-### Email Configuration (SendGrid)
+### Email Configuration
 
-For 2FA email verification, configure SendGrid:
+For 2FA email verification, configure email settings in your `.env` file.
 
-```json
-{
-  "SMTP_HOST": "smtp.sendgrid.net",
-  "SMTP_PORT": "587",
-  "SMTP_USER": "apikey",
-  "SMTP_PASSWORD": "your-sendgrid-api-key"
-}
+**Option 1: Gmail with App Password**
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_16_digit_app_password
 ```
 
-Or use Gmail with App Password:
+**Option 2: SendGrid**
 
-```json
-{
-  "SMTP_HOST": "smtp.gmail.com",
-  "SMTP_PORT": "587",
-  "SMTP_USER": "your-email@gmail.com",
-  "SMTP_PASSWORD": "your-16-digit-app-password"
-}
+```env
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_USER=apikey
+SMTP_PASSWORD=your_sendgrid_api_key
+
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+SENDGRID_FROM_EMAIL=noreply@yourdomain.com
+SENDGRID_FROM_NAME=EduSpace Platform
 ```
 
 ### CORS Configuration
 
-Configure allowed origins for frontend applications:
+Configure allowed origins in your `.env` file:
 
-```json
-{
-  "CORS_ALLOWED_ORIGINS": "http://localhost:3000,https://app.example.com"
-}
-```
+```env
+# Multiple origins (comma-separated)
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:4200
 
-Leave empty to allow all origins (development only):
+# Production example
+CORS_ALLOWED_ORIGINS=https://app.example.com,https://www.example.com
 
-```json
-{
-  "CORS_ALLOWED_ORIGINS": ""
-}
+# Leave empty to allow all origins (development only)
+CORS_ALLOWED_ORIGINS=
 ```
 
 ---
@@ -569,15 +587,24 @@ dotnet watch --project FULLSTACKFURY.EduSpace.API/FULLSTACKFURY.EduSpace.API.csp
 
 **Reset Database:**
 ```sql
--- Connect to MySQL
-mysql -u root -p
+-- Connect to MySQL (adjust port if needed)
+mysql -h localhost -P 3308 -u eduspace -p
 
 -- Drop and recreate
-DROP DATABASE IF EXISTS eduspace;
-CREATE DATABASE eduspace;
+DROP DATABASE IF EXISTS eduspacedb;
+CREATE DATABASE eduspacedb;
 ```
 
 Then restart the application to auto-create schema.
+
+**Using Docker:**
+```bash
+# Stop and remove MySQL container (WARNING: This deletes all data)
+docker-compose down -v
+
+# Start fresh
+docker-compose up -d
+```
 
 ### Adding a New Entity
 
@@ -672,14 +699,27 @@ The application is compatible with:
 Ensure these are configured in your hosting environment:
 
 ```env
+# Database
+MYSQL_ROOT_PASSWORD=your_production_root_password
+MYSQL_DATABASE=eduspacedb
+MYSQL_USER=eduspace
+MYSQL_PASSWORD=your_production_password
 MYSQL_PORT=3306
-MYSQL_DATABASE=eduspace
-MYSQL_USER=your_user
-MYSQL_PASSWORD=your_secure_password
+
+ConnectionStrings__DefaultConnection=server=your-db-host;port=3306;user=eduspace;password=your_production_password;database=eduspacedb;AllowPublicKeyRetrieval=true;SslMode=Required
+
+# Email
 SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
 SMTP_USER=apikey
-SMTP_PASSWORD=your_sendgrid_key
-CORS_ALLOWED_ORIGINS=https://yourdomain.com
+SMTP_PASSWORD=your_sendgrid_api_key
+
+SENDGRID_API_KEY=your_sendgrid_api_key_here
+SENDGRID_FROM_EMAIL=noreply@yourdomain.com
+SENDGRID_FROM_NAME=EduSpace Platform
+
+# CORS
+CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 ```
 
 ---

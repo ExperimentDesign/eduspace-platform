@@ -21,28 +21,38 @@ public class EmailService : IEmailService
     {
         try
         {
-            var smtpHost = _configuration["SMTP_HOST"] ?? throw new InvalidOperationException("SMTP_HOST not configured");
+            var sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY")
+                ?? _configuration["SENDGRID_API_KEY"]
+                ?? throw new InvalidOperationException("SENDGRID_API_KEY not configured");
+
+            var fromEmail = Environment.GetEnvironmentVariable("SENDGRID_FROM_EMAIL")
+                ?? _configuration["SENDGRID_FROM_EMAIL"]
+                ?? throw new InvalidOperationException("SENDGRID_FROM_EMAIL not configured");
+
+            var fromName = Environment.GetEnvironmentVariable("SENDGRID_FROM_NAME")
+                ?? _configuration["SENDGRID_FROM_NAME"]
+                ?? "EduSpace Platform";
+
+            var smtpHost = _configuration["SMTP_HOST"] ?? "smtp.sendgrid.net";
             var smtpPort = int.Parse(_configuration["SMTP_PORT"] ?? "587");
-            var smtpUser = _configuration["SMTP_USER"] ?? throw new InvalidOperationException("SMTP_USER not configured");
-            var smtpPass = _configuration["SMTP_PASSWORD"] ?? throw new InvalidOperationException("SMTP_PASSWORD not configured");
 
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(smtpUser));
+            email.From.Add(new MailboxAddress(fromName, fromEmail));
             email.To.Add(MailboxAddress.Parse(to));
             email.Subject = subject;
             email.Body = new TextPart(TextFormat.Html) { Text = $"<h3>Your code is: {body}</h3>" };
 
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(smtpUser, smtpPass);
+            await smtp.AuthenticateAsync("apikey", sendGridApiKey);
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
-            
-            _logger.LogInformation("Real email sent to {To}", to);
+
+            _logger.LogInformation("Email sent to {To} via SendGrid", to);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending email.");
+            _logger.LogError(ex, "Error sending email via SendGrid");
             throw;
         }
     }
