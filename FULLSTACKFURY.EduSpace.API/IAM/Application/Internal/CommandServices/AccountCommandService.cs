@@ -52,7 +52,7 @@ public class AccountCommandService(
     {
         var account = await accountRepository.FindByUsername(command.Username);
         if (account is null || !hashingService.VerifyPassword(command.Password, account.PasswordHash))
-            throw new Exception("Invalid username or password");
+            throw new ArgumentException("Invalid username or password");
 
         var random = new Random();
         var code = random.Next(100000, 999999).ToString();
