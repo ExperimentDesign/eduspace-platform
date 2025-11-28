@@ -1,5 +1,4 @@
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Aggregates;
-using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.ValueObjects;
 using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Interfaces.REST.Resources;
 
 namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Interfaces.REST.Transform;
@@ -13,9 +12,9 @@ public class MeetingResourceFromEntityAssembler
                 mp.TeacherId,
                 mp.Teacher?.ProfileName?.FirstName ?? "UnKnown",
                 mp.Teacher?.ProfileName?.LastName ?? ""
-                ))
+            ))
             .ToList();
-        
+
         return new MeetingResource(
             entity.Id,
             entity.Title,
@@ -26,6 +25,6 @@ public class MeetingResourceFromEntityAssembler
             entity.AdministratorId,
             entity.ClassroomId,
             teachers
-            );
+        );
     }
 }

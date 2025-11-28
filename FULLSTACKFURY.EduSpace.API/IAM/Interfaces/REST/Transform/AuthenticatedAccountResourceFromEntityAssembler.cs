@@ -20,7 +20,6 @@ public static class AuthenticatedAccountResourceFromEntityAssembler
         ProfileData? profileData = null;
 
         if (teacherProfile != null)
-        {
             profileData = new ProfileData(
                 teacherProfile.Id,
                 teacherProfile.ProfileName.FirstName,
@@ -31,9 +30,7 @@ public static class AuthenticatedAccountResourceFromEntityAssembler
                 teacherProfile.ProfilePrivateInformation.Phone,
                 teacherProfile.AdministratorId
             );
-        }
         else if (adminProfile != null)
-        {
             profileData = new ProfileData(
                 adminProfile.Id,
                 adminProfile.ProfileName.FirstName,
@@ -44,7 +41,6 @@ public static class AuthenticatedAccountResourceFromEntityAssembler
                 adminProfile.ProfilePrivateInformation.Phone,
                 adminProfile.Id
             );
-        }
 
         var classroomData = classrooms?.Select(c => new ClassroomData(c.Id, c.Name, c.Description));
 

@@ -5,12 +5,12 @@ public record ReportStatus
     public static readonly ReportStatus EnProceso = new("in progress");
     public static readonly ReportStatus Completado = new("completed");
 
-    public string Value { get; }
-
     private ReportStatus(string value)
     {
         Value = value;
     }
+
+    public string Value { get; }
 
     public static ReportStatus FromString(string statusStr)
     {
@@ -18,7 +18,7 @@ public record ReportStatus
         {
             "in progress" => EnProceso,
             "completed" => Completado,
-            _ => throw new ArgumentException($"{statusStr} is not a valid report status.") 
+            _ => throw new ArgumentException($"{statusStr} is not a valid report status.")
         };
     }
 }

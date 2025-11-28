@@ -8,10 +8,9 @@ public partial class Meeting
 {
     public ICollection<MeetingSession> MeetingParticipants { get; } = new List<MeetingSession>();
 
-    [NotMapped]
-    public TeacherId TeacherId { get; set; }
+    [NotMapped] public TeacherId TeacherId { get; set; }
 
-public void AddTeacherToMeeting(int teacherId)
+    public void AddTeacherToMeeting(int teacherId)
     {
         MeetingParticipants.Add(new MeetingSession(teacherId, Id));
     }
@@ -26,10 +25,8 @@ public void AddTeacherToMeeting(int teacherId)
         return true;
     }
 
-public void TeacherIdBuilder(int teacherId)
+    public void TeacherIdBuilder(int teacherId)
     {
         TeacherId = new TeacherId(teacherId);
     }
-    
-    
 }

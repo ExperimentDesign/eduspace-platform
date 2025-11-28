@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.Profiles.Infrastructure.Persistence.EFC.Repositories;
 
-public class AdminProfileRepository(AppDbContext context) : BaseRepository<AdminProfile>(context), IAdminProfileRepository
+public class AdminProfileRepository(AppDbContext context)
+    : BaseRepository<AdminProfile>(context), IAdminProfileRepository
 {
     public bool ExistsByAdminProfileId(int adminProfileId)
     {

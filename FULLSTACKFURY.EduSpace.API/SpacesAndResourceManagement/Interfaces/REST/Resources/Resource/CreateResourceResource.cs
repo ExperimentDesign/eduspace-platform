@@ -1,15 +1,15 @@
 ﻿namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST.Resources.Resource;
 
 /// <summary>
-/// The resource to create a new resource
+///     The resource to create a new resource
 /// </summary>
 /// <param name="Name">
-/// The name of the resource
+///     The name of the resource
 /// </param>
 /// <param name="KindOfResource">
-/// The kind of resource
+///     The kind of resource
 /// </param>
 /// <param name="ClassroomId">
-/// The id of the Classroom
+///     The id of the Classroom
 /// </param>
 public record CreateResourceResource(string Name, string KindOfResource);

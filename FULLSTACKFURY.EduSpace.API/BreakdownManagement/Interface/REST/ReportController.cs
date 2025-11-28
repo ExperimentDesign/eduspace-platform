@@ -26,9 +26,9 @@ public class ReportsController(IReportCommandService reportCommandService, IRepo
     {
         var createReportCommand = CreateReportCommandFromResourceAssembler.ToCommandFromResource(resource);
         var report = await reportCommandService.Handle(createReportCommand);
-       
+
         if (report is null) return BadRequest();
-        
+
         var reportResource = ReportResourceFromEntityAssembler.ToResourceFromEntity(report);
         return Ok(reportResource);
     }
@@ -96,7 +96,7 @@ public class ReportsController(IReportCommandService reportCommandService, IRepo
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 
@@ -118,7 +118,7 @@ public class ReportsController(IReportCommandService reportCommandService, IRepo
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 }

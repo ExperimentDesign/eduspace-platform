@@ -1,3 +1,9 @@
+using DotNetEnv;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.CommandServices;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.QueryServices;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Services;
+using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persistence.EFC.Repositories;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.CommandServices;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices;
 using FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.QueryServices;
@@ -9,13 +15,14 @@ using FULLSTACKFURY.EduSpace.API.IAM.Application.Internal.OutboundServices;
 using FULLSTACKFURY.EduSpace.API.IAM.Application.Internal.QueryServices;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Repository;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Services;
-using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL;
-using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Hashing.BCrypt.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Persistence.EFC.Repositories;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Pipeline.Middleware.Components;
+using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Services;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Configuration;
 using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Services;
+using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL;
+using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL.Services;
 using FULLSTACKFURY.EduSpace.API.Profiles.Application.Internal.CommandServices;
 using FULLSTACKFURY.EduSpace.API.Profiles.Application.Internal.OutboundServices.ACL;
 using FULLSTACKFURY.EduSpace.API.Profiles.Application.Internal.QueryServices;
@@ -43,23 +50,15 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.ACL;
 using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.ACL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using IExternalProfileService = FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices.IExternalProfileService;
-using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.CommandServices;
-using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Application.Internal.QueryServices;
-using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
-using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Services;
-using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Infrastructure.Persistence.EFC.Repositories;
-using FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Services;
+using IExternalProfileService =
+    FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.OutboundServices.IExternalProfileService;
 
-DotNetEnv.Env.Load("../.env");
+Env.Load("../.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection string not found.");
-}
+if (string.IsNullOrEmpty(connectionString)) throw new InvalidOperationException("Connection string not found.");
 
 // Add services to the container.
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -67,95 +66,73 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 
-// Configure CORS with allowed origins from configuration
-var allowedOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"]?.Split(',') ?? Array.Empty<string>();
-
+// Configure CORS to allow all origins (academic project)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        policy =>
-        {
-            if (allowedOrigins.Length > 0)
-            {
-                policy.WithOrigins(allowedOrigins)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            }
-            else
-            {
-                // Fallback for development - allow all origins
-                policy.SetIsOriginAllowed(origin => true)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            }
-        });
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(
-    c =>
-    {
-        c.SwaggerDoc("v1",
-            new OpenApiInfo
-            {
-                Title = "FullStackFury.EduSpacePlatform.API",
-                Version = "v1",
-                Description = "Eduspace Platform API",
-                TermsOfService = new Uri("https://acme-learning.com/tos"),
-                Contact = new OpenApiContact
-                {
-                    Name = "Eduspace",
-                    Email = "contact@fullstackfury.com"
-                },
-                License = new OpenApiLicense
-                {
-                    Name = "Apache 2.0",
-                    Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0.html")
-                }
-            });
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1",
+        new OpenApiInfo
         {
-            In = ParameterLocation.Header,
-            Description = "Please enter token into field",
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            BearerFormat = "JWT",
-            Scheme = "bearer"
-        });
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+            Title = "FullStackFury.EduSpacePlatform.API",
+            Version = "v1",
+            Description = "Eduspace Platform API",
+            TermsOfService = new Uri("https://acme-learning.com/tos"),
+            Contact = new OpenApiContact
             {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
-                    }
-                },
-                Array.Empty<string>()
+                Name = "Eduspace",
+                Email = "contact@fullstackfury.com"
+            },
+            License = new OpenApiLicense
+            {
+                Name = "Apache 2.0",
+                Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0.html")
             }
         });
-        c.EnableAnnotations();
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
     });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+    c.EnableAnnotations();
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (builder.Environment.IsDevelopment())
-    {
-
         options.UseMySQL(connectionString)
             .LogTo(Console.WriteLine, LogLevel.Information)
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors();
-    }
     else if (builder.Environment.IsProduction())
-    {
         options.UseMySQL(connectionString)
             .LogTo(Console.WriteLine, LogLevel.Error);
-    }
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -197,7 +174,9 @@ builder.Services.AddScoped<IRExternalProfileService, RExternalProfileServices>()
 
 // Spaces and Resource BC
 // Classrooms
-builder.Services.AddScoped<FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Application.OutboundServices.ACL.IExternalProfileService, ExternalProfileService>();
+builder.Services
+    .AddScoped<FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Application.OutboundServices.ACL.
+        IExternalProfileService, ExternalProfileService>();
 builder.Services.AddScoped<IClassroomRepository, ClassroomRepository>();
 builder.Services.AddScoped<IClassroomCommandService, ClassroomCommandService>();
 builder.Services.AddScoped<IClassroomQueryService, ClassroomQueryService>();
@@ -226,13 +205,9 @@ builder.Services.AddScoped<IHashingService, HashingService>();
 
 // Register EmailService based on environment
 if (builder.Environment.IsDevelopment())
-{
     builder.Services.AddScoped<IEmailService, MockEmailService>();
-}
 else
-{
     builder.Services.AddScoped<IEmailService, EmailService>();
-}
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

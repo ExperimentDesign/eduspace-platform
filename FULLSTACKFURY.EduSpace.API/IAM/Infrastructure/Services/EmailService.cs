@@ -1,10 +1,6 @@
 using FULLSTACKFURY.EduSpace.API.IAM.Application.Internal.OutboundServices;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Services;
 
@@ -24,15 +20,17 @@ public class EmailService : IEmailService
         try
         {
             // 1. Lee la API Key desde las variables de Railway
-            var apiKey = _configuration["SENDGRID_API_KEY"] ?? throw new InvalidOperationException("SENDGRID_API_KEY not configured");
+            var apiKey = _configuration["SENDGRID_API_KEY"] ??
+                         throw new InvalidOperationException("SENDGRID_API_KEY not configured");
             var client = new SendGridClient(apiKey);
 
             // 2. Lee el email verificado (el "de") desde las variables de Railway
-            var fromEmail = _configuration["SMTP_USER"] ?? throw new InvalidOperationException("SMTP_USER (verified sender email) not configured");
+            var fromEmail = _configuration["SMTP_USER"] ??
+                            throw new InvalidOperationException("SMTP_USER (verified sender email) not configured");
             var fromName = _configuration["SENDGRID_FROM_NAME"] ?? "Plataforma EduSpace";
 
             // 3. Crea el mensaje usando SendGrid
-            var msg = new SendGridMessage()
+            var msg = new SendGridMessage
             {
                 From = new EmailAddress(fromEmail, fromName),
                 Subject = subject,
@@ -50,7 +48,8 @@ public class EmailService : IEmailService
             }
             else
             {
-                _logger.LogError("Fallo al enviar email via SendGrid API: {StatusCode} - {Body}", response.StatusCode, await response.Body.ReadAsStringAsync());
+                _logger.LogError("Fallo al enviar email via SendGrid API: {StatusCode} - {Body}", response.StatusCode,
+                    await response.Body.ReadAsStringAsync());
                 throw new Exception($"Failed to send email: {response.StatusCode}");
             }
         }

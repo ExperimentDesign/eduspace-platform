@@ -1,7 +1,5 @@
-﻿namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.Queries
+﻿namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.Queries;
+
+public class GetAllReportsQuery
 {
-    public class GetAllReportsQuery
-    {
-        
-    }
 }

@@ -1,18 +1,11 @@
 ﻿using FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.Shared.Domain.Repositories;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories
+namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Repositories;
+
+public interface IReportRepository : IBaseRepository<Report>
 {
-    public interface IReportRepository : IBaseRepository<Report>
-    {
+    Task<IEnumerable<Report>> FindAllAsync();
 
-
-        Task<IEnumerable<Report>> FindAllAsync();
-
-        Task<IEnumerable<Report>> FindAllByResourceIdAsync(int resourceId);
-
-        
-    }
+    Task<IEnumerable<Report>> FindAllByResourceIdAsync(int resourceId);
 }

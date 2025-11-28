@@ -7,21 +7,20 @@ using FULLSTACKFURY.EduSpace.API.Shared.Domain.Repositories;
 
 namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Application.Internal.CommandServices;
 
-
-public class MeetingCommandService (IMeetingRepository meetingRepository
-    , IUnitOfWork unitOfWork, 
-    IRExternalProfileService externalProfileService, 
+public class MeetingCommandService(
+    IMeetingRepository meetingRepository,
+    IUnitOfWork unitOfWork,
+    IRExternalProfileService externalProfileService,
     IExternalClassroomService externalClassroomService) : IMeetingCommandService
 {
     public async Task<Meeting?> Handle(CreateMeetingCommand command)
     {
-        
         if (!externalProfileService.ValidateAdminIdExistence(command.AdministratorId))
             throw new ArgumentException("Admin ID does not exist.");
-        
+
         if (!externalClassroomService.ValidateClassroomId(command.ClassroomId))
             throw new ArgumentException("Classroom does not exist.");
-        
+
         var meeting = new Meeting(command);
 
         await meetingRepository.AddAsync(meeting);
@@ -51,7 +50,6 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
         var timeChanged = command.Start != meeting.StartTime || command.End != meeting.EndTime;
 
         if ((dateChanged || timeChanged) && meeting.MeetingParticipants.Any())
-        {
             foreach (var participant in meeting.MeetingParticipants)
             {
                 var teacherMeetings = await meetingRepository.FindAllByTeacherIdAsync(participant.TeacherId);
@@ -59,16 +57,14 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
                 var hasConflict = teacherMeetings.Any(existingMeeting =>
                     existingMeeting.Id != meeting.Id &&
                     existingMeeting.Date == command.Date &&
-                    (command.Start < existingMeeting.EndTime &&
-                     command.End > existingMeeting.StartTime)
+                    command.Start < existingMeeting.EndTime &&
+                    command.End > existingMeeting.StartTime
                 );
 
                 if (hasConflict)
-                {
-                    throw new ArgumentException($"The updated time conflicts with another meeting for teacher ID {participant.TeacherId} on {command.Date}.");
-                }
+                    throw new ArgumentException(
+                        $"The updated time conflicts with another meeting for teacher ID {participant.TeacherId} on {command.Date}.");
             }
-        }
 
         meeting.UpdateTitle(command.Title);
         meeting.UpdateDescription(command.Description);
@@ -100,14 +96,13 @@ public class MeetingCommandService (IMeetingRepository meetingRepository
 
         var hasConflict = teacherMeetings.Any(existingMeeting =>
             existingMeeting.Date == meeting.Date &&
-            (meeting.StartTime < existingMeeting.EndTime &&
-             meeting.EndTime > existingMeeting.StartTime)
+            meeting.StartTime < existingMeeting.EndTime &&
+            meeting.EndTime > existingMeeting.StartTime
         );
 
         if (hasConflict)
-        {
-            throw new ArgumentException($"The teacher is already scheduled for another meeting at this time on {meeting.Date}.");
-        }
+            throw new ArgumentException(
+                $"The teacher is already scheduled for another meeting at this time on {meeting.Date}.");
 
         meeting.AddTeacherToMeeting(command.TeacherId);
 

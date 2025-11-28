@@ -2,8 +2,8 @@ namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Application.Internal.
 
 public interface IRExternalProfileService
 {
-    bool ValidateTeacherExistence(int teacherId); 
+    bool ValidateTeacherExistence(int teacherId);
     bool ValidateAdminIdExistence(int adminId);
-    
+
     bool ValidateTeachersExistence(List<int> teacherIds);
 }

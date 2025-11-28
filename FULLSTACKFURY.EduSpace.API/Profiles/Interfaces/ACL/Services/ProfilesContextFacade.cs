@@ -1,9 +1,9 @@
-using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Repositories;
 
 namespace FULLSTACKFURY.EduSpace.API.Profiles.Interfaces.ACL.Services;
 
-public class ProfilesContextFacade(ITeacherProfileRepository teacherProfileRepository,
+public class ProfilesContextFacade(
+    ITeacherProfileRepository teacherProfileRepository,
     IAdminProfileRepository adminProfileRepository) : IProfilesContextFacade
 {
     public bool ValidateTeacherProfileIdExistence(int id)

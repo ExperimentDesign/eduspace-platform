@@ -10,5 +10,7 @@ public interface IAccountCommandService
 {
     Task Handle(SignUpCommand command);
     Task Handle(SignInCommand command);
-    Task<(Account account, string token, int? profileId, TeacherProfile? teacherProfile, AdminProfile? adminProfile, IEnumerable<Classroom>? classrooms, IEnumerable<Meeting>? meetings)> Handle(VerifyCodeCommand command);
+
+    Task<(Account account, string token, int? profileId, TeacherProfile? teacherProfile, AdminProfile? adminProfile,
+        IEnumerable<Classroom>? classrooms, IEnumerable<Meeting>? meetings)> Handle(VerifyCodeCommand command);
 }

@@ -11,9 +11,8 @@ namespace FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Toknes.JWT.Services;
 
 public class TokenService(IOptions<TokenSettings> tokenSettings) : ITokenService
 {
-    
     private readonly TokenSettings _tokenSettings = tokenSettings.Value;
-    
+
     public string GenerateToken(Account account)
     {
         var secret = _tokenSettings.Secret;

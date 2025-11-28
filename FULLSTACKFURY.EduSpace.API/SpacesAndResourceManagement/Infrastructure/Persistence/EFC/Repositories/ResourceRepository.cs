@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Infrastructure.Persistence.EFC.Repositories;
 
-public class ResourceRepository(AppDbContext context): BaseRepository<Resource>(context), IResourceRepository
+public class ResourceRepository(AppDbContext context) : BaseRepository<Resource>(context), IResourceRepository
 {
     // inheritedDoc
     public async Task<IEnumerable<Resource>> FindByClassroomIdAsync(int classroomId)
@@ -14,9 +14,9 @@ public class ResourceRepository(AppDbContext context): BaseRepository<Resource>(
         return await Context.Set<Resource>()
             .Include(resource => resource.Classroom)
             .Where(resource => resource.ClassroomId == classroomId)
-            .ToListAsync(); 
+            .ToListAsync();
     }
-    
+
     // inheritedDoc
     public override async Task<Resource?> FindByIdAsync(int id)
     {
@@ -24,7 +24,7 @@ public class ResourceRepository(AppDbContext context): BaseRepository<Resource>(
             .Include(resource => resource.Classroom)
             .FirstOrDefaultAsync(resource => resource.Id == id);
     }
-    
+
     // inheritedDoc
     public override async Task<IEnumerable<Resource>> ListAsync()
     {
@@ -32,7 +32,7 @@ public class ResourceRepository(AppDbContext context): BaseRepository<Resource>(
             .Include(resource => resource.Classroom)
             .ToListAsync();
     }
-    
+
     // inheritedDoc
     public async Task<bool> ExistsByNameAsync(string name)
     {

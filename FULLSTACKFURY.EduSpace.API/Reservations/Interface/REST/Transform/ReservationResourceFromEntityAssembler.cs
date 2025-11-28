@@ -3,7 +3,8 @@ using FULLSTACKFURY.EduSpace.API.Reservations.Interface.REST.Resources;
 
 namespace FULLSTACKFURY.EduSpace.API.Reservations.Interface.REST.Transform;
 
-public static class ReservationResourceFromEntityAssembler {
+public static class ReservationResourceFromEntityAssembler
+{
     public static ReservationResource ToResourceFromEntity(Reservation entity)
     {
         return new ReservationResource(
@@ -15,5 +16,4 @@ public static class ReservationResourceFromEntityAssembler {
             entity.TeacherId.TeacherIdentifier
         );
     }
-    
 }

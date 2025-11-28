@@ -8,14 +8,14 @@ namespace FULLSTACKFURY.EduSpace.API.IAM.Infrastructure.Pipeline.Middleware.Attr
 public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
     /// <summary>
-    /// On Authorization
+    ///     On Authorization
     /// </summary>
     /// <remarks>
-    /// This method is called when the authorization filter is executed.
-    /// It checks if the user is authenticated and if not, it returns an unauthorized result. 
+    ///     This method is called when the authorization filter is executed.
+    ///     It checks if the user is authenticated and if not, it returns an unauthorized result.
     /// </remarks>
     /// <param name="context">
-    /// The <see cref="AuthorizationFilterContext"/> Authorization Filter Context
+    ///     The <see cref="AuthorizationFilterContext" /> Authorization Filter Context
     /// </param>
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -25,7 +25,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
             Console.WriteLine("Allow Anonymous");
             return;
         }
-        
+
         var account = (Account?)context.HttpContext.Items["Account"];
         if (account is null) context.Result = new UnauthorizedResult();
     }

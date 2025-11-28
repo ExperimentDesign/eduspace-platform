@@ -22,7 +22,7 @@ public class MeetingsController : ControllerBase
         this.meetingCommandService = meetingCommandService;
         this.meetingQueryService = meetingQueryService;
     }
-    
+
     [HttpPost("administrators/{administratorId:int}/classrooms/{classroomId:int}/meetings")]
     [SwaggerOperation(
         Summary = "Creates a meeting",
@@ -30,15 +30,17 @@ public class MeetingsController : ControllerBase
         OperationId = "CreateMeeting"
     )]
     [SwaggerResponse(201, "The meeting was created", typeof(MeetingResource))]
-    public async Task<IActionResult> CreateMeeting([FromRoute] int administratorId , [FromRoute] int classroomId ,[FromBody] CreateMeetingResource resource)
+    public async Task<IActionResult> CreateMeeting([FromRoute] int administratorId, [FromRoute] int classroomId,
+        [FromBody] CreateMeetingResource resource)
     {
-        var createMeetingCommand = CreateMeetingCommandFromResourceAssembler.ToCommandFromResource(administratorId, classroomId, resource);
+        var createMeetingCommand =
+            CreateMeetingCommandFromResourceAssembler.ToCommandFromResource(administratorId, classroomId, resource);
         var meeting = await meetingCommandService.Handle(createMeetingCommand);
         if (meeting is null) return BadRequest("Failed to create meeting.");
         var meetingResource = MeetingResourceFromEntityAssembler.ToResourceFromEntity(meeting);
         return Ok(meetingResource);
     }
-    
+
     [HttpGet("meetings")]
     [SwaggerOperation(
         Summary = "Gets all meetings",
@@ -52,7 +54,7 @@ public class MeetingsController : ControllerBase
         var resources = meetings.Select(MeetingResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
-    
+
     [HttpGet("teachers/{teacherId:int}/meetings")]
     [SwaggerOperation(
         Summary = "Gets all meetings for a teacher",
@@ -116,10 +118,10 @@ public class MeetingsController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
-    
+
     [HttpDelete("meetings/{id:int}")]
     [SwaggerOperation(
         Summary = "Deletes a meeting",
@@ -145,5 +147,4 @@ public class MeetingsController : ControllerBase
             return StatusCode(500, $"An unexpected error occurred: {ex.Message}");
         }
     }
-    
 }

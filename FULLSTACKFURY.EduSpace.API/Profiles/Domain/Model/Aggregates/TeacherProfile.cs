@@ -5,8 +5,6 @@ namespace FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 
 public class TeacherProfile : Profile
 {
-    public int AdministratorId { get; private set; }
-
     public TeacherProfile(string firstName, string lastName, string email
         , string dni, string address, string phone, AccountId accountId
         , int administratorId)
@@ -22,12 +20,17 @@ public class TeacherProfile : Profile
         AdministratorId = command.AdministratorId;
     }
 
-    public TeacherProfile() { }
+    public TeacherProfile()
+    {
+    }
+
+    public int AdministratorId { get; private set; }
 
     public TeacherProfile Update(UpdateTeacherProfileCommand command)
     {
         ProfileName = new ProfileName(command.FirstName, command.LastName);
-        ProfilePrivateInformation = new ProfilePrivateInformation(command.Email, command.Dni, command.Address, command.Phone);
+        ProfilePrivateInformation =
+            new ProfilePrivateInformation(command.Email, command.Dni, command.Address, command.Phone);
         return this;
     }
 }

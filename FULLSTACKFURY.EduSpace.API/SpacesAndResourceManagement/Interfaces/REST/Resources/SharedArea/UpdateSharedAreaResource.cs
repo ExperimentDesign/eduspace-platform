@@ -2,7 +2,7 @@
 
 public record UpdateSharedAreaResource(
     int Id,
-    string Name, 
-    int Capacity, 
+    string Name,
+    int Capacity,
     string Description
 );

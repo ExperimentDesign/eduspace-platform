@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.EventsScheduling.Infrastructure.Persistence.EFC.Repositories;
 
-public class ReservationRepository(AppDbContext context) 
+public class ReservationRepository(AppDbContext context)
     : BaseRepository<Reservation>(context), IReservationRepository
-    
+
 {
     public async Task<IEnumerable<Reservation>> FindAllByAreaIdAsync(int areaId)
     {
@@ -17,6 +17,8 @@ public class ReservationRepository(AppDbContext context)
 
     public async Task<IEnumerable<Reservation>> FindAllByAreaIdMonthAndDayAsync(int areaId, int month, int day)
     {
-        return await Context.Set<Reservation>().Where(f => f.AreaId.Identifier == areaId && f.ReservationDate.Start.Month == month && f.ReservationDate.Start.Day == day).ToListAsync();
+        return await Context.Set<Reservation>().Where(f =>
+            f.AreaId.Identifier == areaId && f.ReservationDate.Start.Month == month &&
+            f.ReservationDate.Start.Day == day).ToListAsync();
     }
 }

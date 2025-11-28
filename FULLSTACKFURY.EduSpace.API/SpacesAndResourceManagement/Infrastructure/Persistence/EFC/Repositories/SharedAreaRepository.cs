@@ -8,24 +8,24 @@ namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Infrastructure.
 
 public class SharedAreaRepository(AppDbContext context) : BaseRepository<SharedArea>(context), ISharedAreaRepository
 {
-    /// <Inheritdoc/>
+    /// <Inheritdoc />
     public new async Task<SharedArea?> FindByIdAsync(int id)
     {
         return await Context.Set<SharedArea>()
             .FirstOrDefaultAsync(sharedArea => sharedArea.Id == id);
     }
 
-    /// <Inheritdoc/>
+    /// <Inheritdoc />
     public new async Task<IEnumerable<SharedArea>> ListAsync()
     {
         return await Context.Set<SharedArea>()
             .ToListAsync();
     }
 
-    /// <Inheritdoc/>
+    /// <Inheritdoc />
     public async Task<bool> ExistsByNameAsync(string name)
     {
         return await Context.Set<SharedArea>()
-            .AnyAsync(sharedArea => sharedArea.Name == name); 
+            .AnyAsync(sharedArea => sharedArea.Name == name);
     }
 }

@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.Profiles.Infrastructure.Persistence.EFC.Repositories;
 
-public class TeacherProfileRepository(AppDbContext context) : BaseRepository<TeacherProfile>(context), ITeacherProfileRepository
+public class TeacherProfileRepository(AppDbContext context)
+    : BaseRepository<TeacherProfile>(context), ITeacherProfileRepository
 {
     public async Task<IEnumerable<TeacherProfile>> FindAllTeachersByAdministratorIdAsync(int id)
     {

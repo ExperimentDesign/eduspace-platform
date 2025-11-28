@@ -1,6 +1,5 @@
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Aggregates;
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Queries;
-using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.ValueObjects;
 
 namespace FULLSTACKFURY.EduSpace.API.Profiles.Domain.Services;
 

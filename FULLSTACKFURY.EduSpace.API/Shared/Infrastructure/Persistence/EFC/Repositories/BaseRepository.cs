@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 
-public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity: class
+public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
     protected readonly AppDbContext Context;
 

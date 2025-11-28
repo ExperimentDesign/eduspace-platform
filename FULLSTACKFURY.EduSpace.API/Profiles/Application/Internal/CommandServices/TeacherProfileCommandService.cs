@@ -7,8 +7,10 @@ using FULLSTACKFURY.EduSpace.API.Shared.Domain.Repositories;
 
 namespace FULLSTACKFURY.EduSpace.API.Profiles.Application.Internal.CommandServices;
 
-public class TeacherProfileCommandService(ITeacherProfileRepository teacherProfileRepository
-    , IUnitOfWork unitOfWork, IExternalIamService externalIamService) 
+public class TeacherProfileCommandService(
+    ITeacherProfileRepository teacherProfileRepository,
+    IUnitOfWork unitOfWork,
+    IExternalIamService externalIamService)
     : ITeacherProfileCommandService
 {
     public async Task<TeacherProfile?> Handle(CreateTeacherProfileCommand command)
@@ -33,10 +35,7 @@ public class TeacherProfileCommandService(ITeacherProfileRepository teacherProfi
     public async Task<TeacherProfile?> Handle(UpdateTeacherProfileCommand command)
     {
         var teacherProfile = await teacherProfileRepository.FindByIdAsync(command.Id);
-        if (teacherProfile == null)
-        {
-            throw new ArgumentException($"Teacher profile with ID {command.Id} not found.");
-        }
+        if (teacherProfile == null) throw new ArgumentException($"Teacher profile with ID {command.Id} not found.");
 
         teacherProfile.Update(command);
         teacherProfileRepository.Update(teacherProfile);
@@ -48,10 +47,7 @@ public class TeacherProfileCommandService(ITeacherProfileRepository teacherProfi
     public async Task Handle(DeleteTeacherProfileCommand command)
     {
         var teacherProfile = await teacherProfileRepository.FindByIdAsync(command.Id);
-        if (teacherProfile == null)
-        {
-            throw new ArgumentException($"Teacher profile with ID {command.Id} not found.");
-        }
+        if (teacherProfile == null) throw new ArgumentException($"Teacher profile with ID {command.Id} not found.");
 
         teacherProfileRepository.Remove(teacherProfile);
         await unitOfWork.CompleteAsync();

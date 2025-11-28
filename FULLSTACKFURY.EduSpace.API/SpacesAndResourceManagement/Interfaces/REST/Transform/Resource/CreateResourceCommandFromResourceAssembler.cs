@@ -4,7 +4,7 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST.Res
 namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST.Transform.Resource;
 
 /// <summary>
-/// Assembler class to transform CreateClassroomResource to CreateClassroomCommand
+///     Assembler class to transform CreateClassroomResource to CreateClassroomCommand
 /// </summary>
 public class CreateResourceCommandFromResourceAssembler
 {

@@ -14,7 +14,9 @@ namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST
 [Route("api/v1/shared-area")]
 [Produces(MediaTypeNames.Application.Json)]
 [SwaggerTag("Available Shared Areas Endpoints")]
-public class SharedAreaController(ISharedAreaQueryService sharedAreaQueryService, ISharedAreaCommandService sharedAreaCommandService) : ControllerBase
+public class SharedAreaController(
+    ISharedAreaQueryService sharedAreaQueryService,
+    ISharedAreaCommandService sharedAreaCommandService) : ControllerBase
 {
     [HttpGet("{id:int}")]
     [SwaggerOperation(
@@ -49,22 +51,23 @@ public class SharedAreaController(ISharedAreaQueryService sharedAreaQueryService
         var sharedAreaResource = SharedAreaResourceFromEntityAssembler.ToResourceFromEntity(sharedArea);
         return CreatedAtAction(nameof(GetSharedAreaById), new { id = sharedArea.Id }, sharedAreaResource);
     }
-    
+
     [HttpGet]
     [SwaggerOperation(
         Summary = "Get all shared areas",
         Description = "Get all shared areas",
         OperationId = "GetAllSharedAreas"
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "The shared areas were successfully retrieved", typeof(IEnumerable<SharedArea>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "The shared areas were successfully retrieved",
+        typeof(IEnumerable<SharedArea>))]
     public async Task<IActionResult> GetAllSharedAreas()
     {
         var getAllSharedAreasQuery = new GetAllSharedAreasQuery();
-        var sharedAreas = await sharedAreaQueryService.Handle( getAllSharedAreasQuery);
+        var sharedAreas = await sharedAreaQueryService.Handle(getAllSharedAreasQuery);
         var sharedAreaResources = sharedAreas.Select(SharedAreaResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(sharedAreaResources);
     }
-    
+
     [HttpPut("{id:int}")]
     [SwaggerOperation(
         Summary = "Updates a shared areas",
@@ -78,7 +81,8 @@ public class SharedAreaController(ISharedAreaQueryService sharedAreaQueryService
         try
         {
             // Map the resource to the UpdateMeetingCommand
-            var updateSharedAreaCommand = UpdateSharedAreaCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+            var updateSharedAreaCommand =
+                UpdateSharedAreaCommandFromResourceAssembler.ToCommandFromResource(id, resource);
 
             // Handle the update command
             var updatedSharedArea = await sharedAreaCommandService.Handle(updateSharedAreaCommand);
@@ -93,10 +97,10 @@ public class SharedAreaController(ISharedAreaQueryService sharedAreaQueryService
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
-    
+
     [HttpDelete("{id:int}")]
     [SwaggerOperation(
         Summary = "Deletes a shared areas",

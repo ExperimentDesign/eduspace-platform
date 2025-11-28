@@ -6,4 +6,3 @@ public record UpdateResourceCommand(
     string KindOfResource,
     int ClassroomId
 );
-    

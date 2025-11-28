@@ -4,7 +4,7 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Model.Comman
 namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Services;
 
 /// <summary>
-/// Service for handling commands related to resources.
+///     Service for handling commands related to resources.
 /// </summary>
 public interface IResourceCommandService
 {

@@ -5,18 +5,6 @@ namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Model.Aggregat
 
 public partial class Meeting
 {
-    public int Id { get; private set; }
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public DateOnly Date { get; private set; }
-    
-    public TimeOnly StartTime { get; private set; } 
-    public TimeOnly EndTime { get; private set; }
-    
-    // public List<Teacher> Teachers { get; private set; } 
-    public AdministratorId AdministratorId { get; private set; }
-    public ClassroomId ClassroomId { get; private set; }
-
     public Meeting()
     {
         Title = string.Empty;
@@ -25,8 +13,9 @@ public partial class Meeting
         ClassroomId = default!;
         TeacherId = default!;
     }
-    
-    public Meeting(string title, string description, DateOnly date, TimeOnly start, TimeOnly end, int administratorId, int classroomId) : this()
+
+    public Meeting(string title, string description, DateOnly date, TimeOnly start, TimeOnly end, int administratorId,
+        int classroomId) : this()
     {
         Title = title;
         Description = description;
@@ -57,7 +46,19 @@ public partial class Meeting
         AdministratorId = new AdministratorId(command.AdministratorId);
         ClassroomId = new ClassroomId(command.ClassroomId);
     }
-    
+
+    public int Id { get; private set; }
+    public string Title { get; private set; }
+    public string Description { get; private set; }
+    public DateOnly Date { get; private set; }
+
+    public TimeOnly StartTime { get; private set; }
+    public TimeOnly EndTime { get; private set; }
+
+    // public List<Teacher> Teachers { get; private set; } 
+    public AdministratorId AdministratorId { get; private set; }
+    public ClassroomId ClassroomId { get; private set; }
+
     public void UpdateTitle(string? title)
     {
         if (!string.IsNullOrEmpty(title))
@@ -93,5 +94,4 @@ public partial class Meeting
         if (classroomId.HasValue && validateClassroom(classroomId.Value))
             ClassroomId = new ClassroomId(classroomId.Value);
     }
-
 }

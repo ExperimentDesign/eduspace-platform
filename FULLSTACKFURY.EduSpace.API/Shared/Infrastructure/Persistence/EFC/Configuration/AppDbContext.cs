@@ -14,13 +14,14 @@ namespace FULLSTACKFURY.EduSpace.API.Shared.Infrastructure.Persistence.EFC.Confi
 
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
+    public DbSet<VerificationCode> VerificationCodes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         builder.AddCreatedUpdatedInterceptor();
         base.OnConfiguring(builder);
     }
 
-    public DbSet<VerificationCode> VerificationCodes { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -53,9 +54,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 pi.Property(tp => tp.Dni).HasColumnName("Dni");
                 pi.Property(tp => tp.Address).HasColumnName("Address");
                 pi.Property(tp => tp.Phone).HasColumnName("Phone");
-
             });
-        
+
         // Administrators Profile Context
 
         builder.Entity<AdminProfile>().HasKey(ap => ap.Id);
@@ -76,7 +76,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 pi.Property(tp => tp.Address).HasColumnName("Address");
                 pi.Property(tp => tp.Phone).HasColumnName("Phone");
             });
-        
+
         //IAM CONTEXT
 
         builder.Entity<Account>().HasKey(a => a.Id);
@@ -84,7 +84,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Account>().Property(a => a.Username).IsRequired();
         builder.Entity<Account>().Property(a => a.PasswordHash).IsRequired();
         builder.Entity<Account>().Property(a => a.Role).IsRequired();
-        
+
         //Reservations Context
 
         builder.Entity<Reservation>().HasKey(r => r.Id);
@@ -109,7 +109,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 ti.WithOwner().HasForeignKey("Id");
                 ti.Property(r => r.TeacherIdentifier).HasColumnName("TeacherId");
             });
-        
+
         builder.Entity<Classroom>().HasKey(c => c.Id);
         builder.Entity<Classroom>().Property(c => c.Name).IsRequired();
         builder.Entity<Classroom>().Property(c => c.Description).IsRequired();
@@ -119,7 +119,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 ti.WithOwner().HasForeignKey("Id");
                 ti.Property(r => r.TeacherIdentifier).HasColumnName("TeacherId");
             });
-        
+
         builder.Entity<Resource>().HasKey(r => r.Id);
         builder.Entity<Resource>().Property(r => r.Name).IsRequired();
         builder.Entity<Resource>().Property(r => r.KindOfResource).IsRequired();
@@ -128,14 +128,14 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .WithMany(c => c.Resources)
             .HasForeignKey(r => r.ClassroomId)
             .OnDelete(DeleteBehavior.Cascade);
-                
+
         builder.Entity<SharedArea>().HasKey(sa => sa.Id);
         builder.Entity<SharedArea>().Property(sa => sa.Name).IsRequired();
         builder.Entity<SharedArea>().Property(sa => sa.Capacity).IsRequired();
         builder.Entity<SharedArea>().Property(sa => sa.Description).IsRequired();
-        
+
         //RESERVATION SCHEDULING BC 
-        
+
         builder.Entity<Meeting>().HasKey(m => m.Id);
         builder.Entity<Meeting>().Property(m => m.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Meeting>().Property(m => m.Title).IsRequired();
@@ -145,37 +145,37 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.Entity<Meeting>().Property(m => m.Date)
             .HasConversion(v => v.ToDateTime(TimeOnly.MinValue),
                 v => DateOnly.FromDateTime(v));
-        
+
         builder.Entity<Meeting>()
             .Property(m => m.EndTime)
             .HasConversion(
-                v => v.ToTimeSpan(),                 // Convert TimeOnly to TimeSpan for the database
-                v => TimeOnly.FromTimeSpan(v));  
-        
+                v => v.ToTimeSpan(), // Convert TimeOnly to TimeSpan for the database
+                v => TimeOnly.FromTimeSpan(v));
+
         builder.Entity<Meeting>()
             .Property(m => m.StartTime)
             .HasConversion(
-                v => v.ToTimeSpan(),                 // Convert TimeOnly to TimeSpan for the database
-                v => TimeOnly.FromTimeSpan(v));  
-        
+                v => v.ToTimeSpan(), // Convert TimeOnly to TimeSpan for the database
+                v => TimeOnly.FromTimeSpan(v));
+
         builder.Entity<Meeting>().Property(m => m.StartTime).IsRequired();
         builder.Entity<Meeting>().Property(m => m.EndTime).IsRequired();
-        
+
         builder.Entity<Meeting>().OwnsOne(m => m.AdministratorId,
-           ai =>
-           {
-               ai.WithOwner().HasForeignKey("Id");
-               ai.Property(r => r.AdministratorIdentifier).HasColumnName("AdministratorId");
-           });
-        
-        
+            ai =>
+            {
+                ai.WithOwner().HasForeignKey("Id");
+                ai.Property(r => r.AdministratorIdentifier).HasColumnName("AdministratorId");
+            });
+
+
         builder.Entity<Meeting>().OwnsOne(m => m.ClassroomId,
-    ci =>
-    {
-        ci.WithOwner().HasForeignKey("Id");
-        ci.Property(r => r.ClassroomIdentifier).HasColumnName("ClassroomId");
-    });
-        
+            ci =>
+            {
+                ci.WithOwner().HasForeignKey("Id");
+                ci.Property(r => r.ClassroomIdentifier).HasColumnName("ClassroomId");
+            });
+
         builder.Entity<MeetingSession>()
             .HasKey(ms => new { ms.MeetingId, ms.TeacherId });
 
@@ -190,29 +190,29 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .WithMany()
             .HasForeignKey(ms => ms.TeacherId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         // breakdown Management Context
         builder.Entity<Report>().HasKey(r => r.Id);
         builder.Entity<Report>().Property(r => r.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Entity<Report>().Property(r => r.KindOfReport).IsRequired();
         builder.Entity<Report>().Property(r => r.Description).IsRequired();
         builder.Entity<Report>().Property(r => r.CreatedAt).IsRequired();
-        
+
         builder.Entity<Report>().Property(r => r.Status)
             .HasConversion(
                 status => status.Value,
-                value => ReportStatus.FromString(value) 
+                value => ReportStatus.FromString(value)
             ).IsRequired();
-        
+
         builder.Entity<Report>().Property(r => r.ResourceId)
             .HasConversion(
-                resourceId => resourceId.Id, 
-                id => new ResourceId(id) 
+                resourceId => resourceId.Id,
+                id => new ResourceId(id)
             )
             .HasColumnName("ResourceId");
-        
+
         //#TODO Add configurations here
-        
+
         builder.UseSnakeCaseNamingConvention();
     }
 }

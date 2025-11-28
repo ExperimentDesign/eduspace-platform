@@ -4,9 +4,7 @@ using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Model.Queries;
 using FULLSTACKFURY.EduSpace.API.Profiles.Domain.Services;
 using FULLSTACKFURY.EduSpace.API.Profiles.Interfaces.REST.Resources;
 using FULLSTACKFURY.EduSpace.API.Profiles.Interfaces.REST.Transform;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace FULLSTACKFURY.EduSpace.API.Profiles.Interfaces.REST;
@@ -14,7 +12,8 @@ namespace FULLSTACKFURY.EduSpace.API.Profiles.Interfaces.REST;
 [ApiController]
 [Route("api/v1/teachers-profiles")]
 [Produces(MediaTypeNames.Application.Json)]
-public class TeachersProfilesController(ITeacherProfileCommandService teacherProfileCommandService,
+public class TeachersProfilesController(
+    ITeacherProfileCommandService teacherProfileCommandService,
     ITeacherQueryService teacherQueryService)
     : ControllerBase
 {
@@ -32,7 +31,7 @@ public class TeachersProfilesController(ITeacherProfileCommandService teacherPro
     public async Task<IActionResult> GetAllTeacherProfiles()
     {
         var teacherProfiles = await teacherQueryService.Handle(new GetAllTeachersProfileQuery());
-        var teacherResources 
+        var teacherResources
             = teacherProfiles.Select(TeacherProfileResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(teacherResources);
     }
@@ -54,11 +53,13 @@ public class TeachersProfilesController(ITeacherProfileCommandService teacherPro
     )]
     [SwaggerResponse(200, "Teacher profile updated successfully", typeof(TeacherProfileResource))]
     [SwaggerResponse(404, "Teacher profile not found")]
-    public async Task<IActionResult> UpdateTeacherProfile([FromRoute] int teacherId, [FromBody] UpdateTeacherProfileResource resource)
+    public async Task<IActionResult> UpdateTeacherProfile([FromRoute] int teacherId,
+        [FromBody] UpdateTeacherProfileResource resource)
     {
         try
         {
-            var updateCommand = UpdateTeacherProfileCommandFromResourceAssembler.ToCommandFromResource(teacherId, resource);
+            var updateCommand =
+                UpdateTeacherProfileCommandFromResourceAssembler.ToCommandFromResource(teacherId, resource);
             var updatedProfile = await teacherProfileCommandService.Handle(updateCommand);
 
             if (updatedProfile is null)
@@ -69,7 +70,7 @@ public class TeachersProfilesController(ITeacherProfileCommandService teacherPro
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 
@@ -91,7 +92,7 @@ public class TeachersProfilesController(ITeacherProfileCommandService teacherPro
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 }

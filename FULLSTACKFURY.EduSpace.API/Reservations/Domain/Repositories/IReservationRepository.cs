@@ -8,6 +8,4 @@ public interface IReservationRepository : IBaseRepository<Reservation>
     Task<IEnumerable<Reservation>> FindAllByAreaIdAsync(int areaId);
 
     Task<IEnumerable<Reservation>> FindAllByAreaIdMonthAndDayAsync(int areaId, int month, int day);
-    
-    
 }

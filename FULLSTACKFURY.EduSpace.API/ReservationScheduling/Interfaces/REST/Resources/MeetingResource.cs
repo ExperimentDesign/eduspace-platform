@@ -12,10 +12,10 @@ public record MeetingResource(
     AdministratorId AdministratorId,
     ClassroomId ClassroomId,
     IEnumerable<TeacherResource> Teachers
-    );
+);
 
-public record TeacherResource (
-    int Id, 
+public record TeacherResource(
+    int Id,
     string FirstName,
     string LastName
-    ); 
+);

@@ -5,7 +5,7 @@ using FULLSTACKFURY.EduSpace.API.ReservationScheduling.Domain.Services;
 
 namespace FULLSTACKFURY.EduSpace.API.ReservationScheduling.Application.Internal.QueryServices;
 
-public class MeetingQueryService (IMeetingRepository meetingRepository) : IMeetingQueryService
+public class MeetingQueryService(IMeetingRepository meetingRepository) : IMeetingQueryService
 {
     public async Task<IEnumerable<Meeting>> Handle(GetAllMeetingsQuery query)
     {

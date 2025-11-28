@@ -22,6 +22,7 @@ public class RequestAuthorizationMiddleware(RequestDelegate next)
             await next(context);
             return;
         }
+
         // Check if the endpoint has AuthorizeAttribute. If it does, authorize the request
         Console.Write("Entering Authorization");
         var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();

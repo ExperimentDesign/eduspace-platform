@@ -14,7 +14,9 @@ namespace FULLSTACKFURY.EduSpace.API.Reservations.Interface.REST;
 [ApiController]
 [Route("api/v1/")]
 [Produces(MediaTypeNames.Application.Json)]
-public class ReservationsController(IReservationCommandService reservationCommandService, IReservationQueryService reservationQueryService)
+public class ReservationsController(
+    IReservationCommandService reservationCommandService,
+    IReservationQueryService reservationQueryService)
     : ControllerBase
 {
     [HttpPost("teachers/{teacherId:int}/areas/{areaId:int}/reservations")]
@@ -24,13 +26,15 @@ public class ReservationsController(IReservationCommandService reservationComman
         OperationId = "CreateReservation"
     )]
     [SwaggerResponse(201, "The category was created", typeof(ReservationResource))]
-    public async Task<IActionResult> CreateReservation([FromRoute] int teacherId, [FromRoute] int areaId , [FromBody] CreateReservationResource resource)
+    public async Task<IActionResult> CreateReservation([FromRoute] int teacherId, [FromRoute] int areaId,
+        [FromBody] CreateReservationResource resource)
     {
-        var createReservationCommand = CreateReservationCommandFromResourceAssembler.ToCommandFromResource(areaId, teacherId, resource);
+        var createReservationCommand =
+            CreateReservationCommandFromResourceAssembler.ToCommandFromResource(areaId, teacherId, resource);
         var reservation = await reservationCommandService.Handle(createReservationCommand);
-       
+
         if (reservation is null) return BadRequest();
-        
+
         var reservationResource = ReservationResourceFromEntityAssembler.ToResourceFromEntity(reservation);
         return Ok(reservationResource);
     }
@@ -83,7 +87,8 @@ public class ReservationsController(IReservationCommandService reservationComman
     )]
     [SwaggerResponse(200, "Reservation updated successfully", typeof(ReservationResource))]
     [SwaggerResponse(404, "Reservation not found")]
-    public async Task<IActionResult> UpdateReservation([FromRoute] int id, [FromBody] UpdateReservationResource resource)
+    public async Task<IActionResult> UpdateReservation([FromRoute] int id,
+        [FromBody] UpdateReservationResource resource)
     {
         try
         {
@@ -98,11 +103,11 @@ public class ReservationsController(IReservationCommandService reservationComman
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
         catch (Exception ex)
         {
-            return BadRequest(new { Message = ex.Message });
+            return BadRequest(new { ex.Message });
         }
     }
 
@@ -124,7 +129,7 @@ public class ReservationsController(IReservationCommandService reservationComman
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 }

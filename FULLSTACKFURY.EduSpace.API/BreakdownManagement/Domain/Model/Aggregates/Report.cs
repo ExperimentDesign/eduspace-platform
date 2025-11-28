@@ -5,13 +5,6 @@ namespace FULLSTACKFURY.EduSpace.API.BreakdownManagement.Domain.Model.Aggregates
 
 public record Report
 {
-    public int Id { get; init; }
-    public string KindOfReport { get; private set; }
-    public string Description { get; private set; }
-    public ResourceId ResourceId { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public ReportStatus Status { get; private set; }
-
     public Report()
     {
         KindOfReport = string.Empty;
@@ -20,7 +13,8 @@ public record Report
         ResourceId = default!;
     }
 
-    public Report(string kindOfReport, string description, int resourceId, DateTime createdAt, ReportStatus? status = null)
+    public Report(string kindOfReport, string description, int resourceId, DateTime createdAt,
+        ReportStatus? status = null)
     {
         KindOfReport = kindOfReport;
         Description = description;
@@ -37,6 +31,13 @@ public record Report
         CreatedAt = command.CreatedAt;
         Status = ReportStatus.EnProceso; // Default status
     }
+
+    public int Id { get; init; }
+    public string KindOfReport { get; private set; }
+    public string Description { get; private set; }
+    public ResourceId ResourceId { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public ReportStatus Status { get; private set; }
 
     public Report Update(UpdateReportCommand command)
     {

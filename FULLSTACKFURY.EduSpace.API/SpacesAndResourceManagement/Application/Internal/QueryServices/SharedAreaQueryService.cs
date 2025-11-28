@@ -6,20 +6,20 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Services;
 namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Application.Internal.QueryServices;
 
 /// <summary>
-/// Classroom query service
+///     Classroom query service
 /// </summary>
 /// <param name="classroomRepository">
-/// The classroom repository
+///     The classroom repository
 /// </param>
 public class SharedAreaQueryService(ISharedAreaRepository sharedAreaRepository) : ISharedAreaQueryService
 {
-    /// <Inheritdoc/>
+    /// <Inheritdoc />
     public async Task<SharedArea?> Handle(GetSharedAreaByIdQuery query)
     {
         return await sharedAreaRepository.FindByIdAsync(query.SharedAreaId);
     }
-    
-    /// <Inheritdoc/>
+
+    /// <Inheritdoc />
     public async Task<IEnumerable<SharedArea>> Handle(GetAllSharedAreasQuery query)
     {
         return await sharedAreaRepository.ListAsync();

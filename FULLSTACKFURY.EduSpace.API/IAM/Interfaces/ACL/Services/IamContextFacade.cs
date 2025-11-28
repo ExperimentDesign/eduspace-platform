@@ -1,11 +1,11 @@
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Commands;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Model.Queries;
 using FULLSTACKFURY.EduSpace.API.IAM.Domain.Services;
-using FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL;
 
 namespace FULLSTACKFURY.EduSpace.API.IAM.Interfaces.ACL.Services;
 
-public class IamContextFacade(IAccountCommandService accountCommandService,
+public class IamContextFacade(
+    IAccountCommandService accountCommandService,
     IAccountQueryService accountQueryService) : IIamContextFacade
 {
     public async Task<int> CreateAccount(string username, string password, string role)

@@ -7,16 +7,16 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Domain.Services;
 namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Application.Internal.CommandServices;
 
 /// <summary>
-/// Represents a classroom command service for Classroom entities
+///     Represents a classroom command service for Classroom entities
 /// </summary>
 /// <param name="classroomRepository">
-/// The repository for classroom entities
+///     The repository for classroom entities
 /// </param>
 /// <param name="resourceRepository">
-/// The repository for resource entities
+///     The repository for resource entities
 /// </param>
 /// <param name="unitOfWork">
-/// The unit of work for the repository
+///     The unit of work for the repository
 /// </param>
 public class ResourceCommandService(
     IClassroomRepository classroomRepository,
@@ -26,15 +26,16 @@ public class ResourceCommandService(
     public async Task<Resource?> Handle(CreateResourceCommand command)
     {
         var classroom = await classroomRepository.FindByIdAsync(command.ClassroomId);
-        if(classroom is null) throw new Exception("Classroom not found");
-        if(await resourceRepository.ExistsByNameAsync(command.Name)) throw new Exception("Resource with the same name already exists");
+        if (classroom is null) throw new Exception("Classroom not found");
+        if (await resourceRepository.ExistsByNameAsync(command.Name))
+            throw new Exception("Resource with the same name already exists");
         var resource = new Resource(command);
         await resourceRepository.AddAsync(resource);
         await unitOfWork.CompleteAsync();
         resource.Classroom = classroom;
         return resource;
-    } 
-    
+    }
+
     public async Task Handle(DeleteResourceCommand command)
     {
         var resource = await resourceRepository.FindByIdAsync(command.ResourceId);
@@ -44,7 +45,7 @@ public class ResourceCommandService(
 
         await unitOfWork.CompleteAsync();
     }
-    
+
     public async Task<Resource?> Handle(UpdateResourceCommand command)
     {
         var resource = await resourceRepository.FindByIdAsync(command.Id);

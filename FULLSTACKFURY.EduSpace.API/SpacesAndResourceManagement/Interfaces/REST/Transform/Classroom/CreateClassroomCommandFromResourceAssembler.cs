@@ -4,18 +4,18 @@ using FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST.Res
 namespace FULLSTACKFURY.EduSpace.API.SpacesAndResourceManagement.Interfaces.REST.Transform.Classroom;
 
 /// <summary>
-/// Assembler class to transform CreateClassroomResource to CreateClassroomCommand
+///     Assembler class to transform CreateClassroomResource to CreateClassroomCommand
 /// </summary>
 public class CreateClassroomCommandFromResourceAssembler
 {
     /// <summary>
-    /// Transform CreateClassroomResource to CreateClassroomCommand
+    ///     Transform CreateClassroomResource to CreateClassroomCommand
     /// </summary>
     /// <param name="resource">
-    /// The <see cref="CreateClassroomResource"/> resource to transform
+    ///     The <see cref="CreateClassroomResource" /> resource to transform
     /// </param>
     /// <returns>
-    /// The resulting <see cref="CreateClassroomCommand"/> command with the values from the resource
+    ///     The resulting <see cref="CreateClassroomCommand" /> command with the values from the resource
     /// </returns>
     public static CreateClassroomCommand ToCommandFromResource(int teacherId, CreateClassroomResource resource)
     {

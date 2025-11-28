@@ -12,21 +12,22 @@ namespace FULLSTACKFURY.EduSpace.API.Profiles.Interfaces.REST;
 [ApiController]
 [Route("api/v1/administrator-profiles")]
 [Produces(MediaTypeNames.Application.Json)]
-public class AdministratorProfilesController(IAdminProfileCommandService profileCommandService, 
+public class AdministratorProfilesController(
+    IAdminProfileCommandService profileCommandService,
     IAdminProfileQueryService profileQueryService)
-: ControllerBase
+    : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> CreateAdministratorProfile([FromBody] CreateAdminProfileResource resource)
     {
         var createAdminProfileCommand = CreateAdminProfileCommandFromResourceAssembler.ToCommandFromResource(resource);
         var adminProfile = await profileCommandService.Handle(createAdminProfileCommand);
-        
+
         if (adminProfile is null) return BadRequest();
 
         var adminProfileResource = AdminProfileResourceFromEntityAssembler.ToResourceFromEntity(adminProfile);
-        
-        return Ok(adminProfileResource); 
+
+        return Ok(adminProfileResource);
     }
 
     [HttpGet]
@@ -37,11 +38,12 @@ public class AdministratorProfilesController(IAdminProfileCommandService profile
             administratorProfiles.Select(AdminProfileResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(administratorResources);
     }
-    
+
     [HttpGet("{administratorId:int}")]
     public async Task<IActionResult> GetTeacherProfileById([FromRoute] int administratorId)
     {
-        var administratorProfile = await profileQueryService.Handle(new GetAdministratorProfileByIdQuery(administratorId));
+        var administratorProfile =
+            await profileQueryService.Handle(new GetAdministratorProfileByIdQuery(administratorId));
         if (administratorProfile is null) return NotFound();
         var administratorResource = AdminProfileResourceFromEntityAssembler.ToResourceFromEntity(administratorProfile);
         return Ok(administratorResource);
@@ -55,11 +57,13 @@ public class AdministratorProfilesController(IAdminProfileCommandService profile
     )]
     [SwaggerResponse(200, "Administrator profile updated successfully", typeof(AdminProfileResource))]
     [SwaggerResponse(404, "Administrator profile not found")]
-    public async Task<IActionResult> UpdateAdministratorProfile([FromRoute] int administratorId, [FromBody] UpdateAdminProfileResource resource)
+    public async Task<IActionResult> UpdateAdministratorProfile([FromRoute] int administratorId,
+        [FromBody] UpdateAdminProfileResource resource)
     {
         try
         {
-            var updateCommand = UpdateAdminProfileCommandFromResourceAssembler.ToCommandFromResource(administratorId, resource);
+            var updateCommand =
+                UpdateAdminProfileCommandFromResourceAssembler.ToCommandFromResource(administratorId, resource);
             var updatedProfile = await profileCommandService.Handle(updateCommand);
 
             if (updatedProfile is null)
@@ -70,7 +74,7 @@ public class AdministratorProfilesController(IAdminProfileCommandService profile
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 
@@ -92,7 +96,7 @@ public class AdministratorProfilesController(IAdminProfileCommandService profile
         }
         catch (ArgumentException ex)
         {
-            return NotFound(new { Message = ex.Message });
+            return NotFound(new { ex.Message });
         }
     }
 }

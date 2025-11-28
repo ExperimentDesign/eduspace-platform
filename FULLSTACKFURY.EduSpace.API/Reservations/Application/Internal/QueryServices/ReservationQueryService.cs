@@ -5,7 +5,7 @@ using FULLSTACKFURY.EduSpace.API.EventsScheduling.Domain.Services;
 
 namespace FULLSTACKFURY.EduSpace.API.EventsScheduling.Application.Internal.QueryServices;
 
-public class ReservationQueryService (IReservationRepository reservationRepository) : IReservationQueryService
+public class ReservationQueryService(IReservationRepository reservationRepository) : IReservationQueryService
 {
     public Task<IEnumerable<Reservation>> Handle(GetAllReservationsQuery query)
     {
